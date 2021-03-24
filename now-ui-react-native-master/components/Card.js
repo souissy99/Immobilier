@@ -31,12 +31,12 @@ class Card extends React.Component {
 
     return (
       <Block row={horizontal} card flex style={cardContainer}>
-        <TouchableWithoutFeedback onPress={() => navigation.navigate('Pro')}>
+        <TouchableWithoutFeedback>
           <Block flex style={imgContainer}>
             <Image resizeMode="cover" source={item.image} style={imageStyles} />
           </Block>
         </TouchableWithoutFeedback>
-        <TouchableWithoutFeedback onPress={() => navigation.navigate('Pro')}>
+        <TouchableWithoutFeedback >
           <Block flex space="between" style={styles.cardDescription}>
             <Block flex>
               <Text

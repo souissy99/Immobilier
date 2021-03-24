@@ -89,7 +89,7 @@ class DrawerItem extends React.Component {
             color={focused ? nowTheme.COLORS.PRIMARY : "white"}
           />
         );
-      case "LOGOUT":
+      case "DECONNEXION":
         return (
           <Icon
             name="share"
@@ -120,7 +120,7 @@ class DrawerItem extends React.Component {
             ? Linking.openURL(
                 "https://demos.creative-tim.com/now-ui-pro-react-native/docs/"
               ).catch(err => console.error("An error occurred", err))
-            : navigation.navigate(title == 'LOGOUT' ? 'Onboarding' : title)
+            : navigation.navigate(title == 'DECONNEXION' ? 'Onboarding' : title)
         }
       >
         <Block flex row style={containerStyles}>

@@ -15,7 +15,6 @@ const iPhoneX = () =>
 const BellButton = ({ isWhite, style, navigation }) => (
   <TouchableOpacity
     style={[styles.button, style]}
-    onPress={() => navigation.navigate('Pro')}
   >
     <Icon
       family="NowExtra"
@@ -28,7 +27,7 @@ const BellButton = ({ isWhite, style, navigation }) => (
 );
 
 const BasketButton = ({ isWhite, style, navigation }) => (
-  <TouchableOpacity style={[styles.button, style]} onPress={() => navigation.navigate('Pro')}>
+  <TouchableOpacity style={[styles.button, style]} >
     <Icon
       family="NowExtra"
       size={16}
@@ -106,22 +105,6 @@ class Header extends React.Component {
         break;
     }
   };
-  renderSearch = () => {
-    const { navigation } = this.props;
-    return (
-      <Input
-        right
-        color="black"
-        style={styles.search}
-        placeholder="What are you looking for?"
-        placeholderTextColor={'#8898AA'}
-        onFocus={() => {Keyboard.dismiss(); navigation.navigate('Pro')}}
-        iconContent={
-          <Icon size={16} color={theme.COLORS.MUTED} name="zoom-bold2x" family="NowExtra" />
-        }
-      />
-    );
-  };
   renderOptions = () => {
     const { navigation, optionLeft, optionRight } = this.props;
 
@@ -130,7 +113,6 @@ class Header extends React.Component {
         <Button
           shadowless
           style={[styles.tab, styles.divider]}
-          onPress={() => console.log(navigation.navigate('Pro'))}
         >
           <Block row middle>
             <Icon
@@ -145,7 +127,7 @@ class Header extends React.Component {
             </Text>
           </Block>
         </Button>
-        <Button shadowless style={styles.tab} onPress={() => navigation.navigate('Pro')}>
+        <Button shadowless style={styles.tab} >
           <Block row middle>
             <Icon
               size={18}
@@ -182,7 +164,6 @@ class Header extends React.Component {
     if (search || tabs || options) {
       return (
         <Block center>
-          {search ? this.renderSearch() : null}
           {options ? this.renderOptions() : null}
           {tabs ? this.renderTabs() : null}
         </Block>
@@ -202,7 +183,7 @@ class Header extends React.Component {
       ...props
     } = this.props;
 
-    const noShadow = ['Search', 'Categories', 'Deals', 'Pro', 'Profile'].includes(title);
+    const noShadow = ['Search', 'Categories', 'Deals', 'Profile'].includes(title);
     const headerStyles = [
       !noShadow ? styles.shadow : null,
       transparent ? { backgroundColor: 'rgba(0,0,0,0)' } : null

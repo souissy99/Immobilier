@@ -1,23 +1,28 @@
 import React from 'react';
-import { ImageBackground, Image, StyleSheet, StatusBar, Dimensions, Platform } from 'react-native';
-import { Block, Button, Text, theme } from 'galio-framework';
+import { ImageBackground, Image, StyleSheet, StatusBar, Dimensions, Platfor, TouchableWithoutFeedback, Keyboard} from 'react-native';
+import { Block, Button, Text, Checkbox, theme } from 'galio-framework';
 
 const { height, width } = Dimensions.get('screen');
 import { Images, nowTheme } from '../constants/';
 import { HeaderHeight } from '../constants/utils';
+import { Input } from '../components';
+
+const DismissKeyboard = ({ children }) => (
+  <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>{children}</TouchableWithoutFeedback>
+);
 
 export default class Onboarding extends React.Component {
+  _onPressButton = () => {
+    alert('You tapped the button!')
+    return this.props.navigation.navigate('App')
+  }
+  
   render() {
-    const { navigation } = this.props;
-
     return (
-      <Block flex style={styles.container}>
+      <DismissKeyboard>
+        <Block flex style={styles.container}>
         <StatusBar barStyle="light-content" />
         <Block flex>
-          <ImageBackground
-            source={Images.Onboarding}
-            style={{ flex: 1, height: height, width, zIndex: 1 }}
-          />
           <Block space="between" style={styles.padded}>
             <Block>
               <Block middle>
@@ -27,51 +32,54 @@ export default class Onboarding extends React.Component {
                 <Block middle>
                   <Text
                     style={{
-                      fontFamily: 'montserrat-regular', bottom: 50, position: 'absolute', letterSpacing: 2, paddingHorizontal: 20, textAlign: 'center'
+                      fontFamily: 'montserrat-regular', bottom: 50, position: 'absolute', paddingHorizontal: 20, textAlign: 'center', color: 'black'
                     }}
                     color="white"
-                    size={44}
+                    size={40}
                   >
-                    Now UI
-                    React Native
+                    Simulateur
+                    Immo
                   </Text>
                 </Block>
               </Block>
-              <Block middle row>
-                <Text
-                  color="white"
-                  size={16}
-                  style={{ fontFamily: 'montserrat-regular' }}
-                >
-                  Designed by
-                </Text>
-                <Image
-                  source={Images.InvisionLogo}
-                  style={{
-                    height: 28,
-                    width: 91,
-                    marginLeft: theme.SIZES.BASE
-                  }}
-                />
-              </Block>
-              <Block middle row style={{ marginTop: 15, marginBottom: 30}}>
-                <Text
-                  color="white"
-                  size={16}
-                  style={{ fontFamily: 'montserrat-regular' }}
-                >
-                  Coded by
-                </Text>
-                <Image
-                  source={Images.CreativeTimLogo}
-                  style={{
-                    height: 29,
-                    width: 129,
-                    marginLeft: theme.SIZES.BASE
-                  }}
-                />
-              </Block>
+              <Block width={width * 0.8} style={{ marginBottom: 5 }}>
+                            <Input
+                              placeholder="Test"
+                              style={styles.inputs}
+                            />
+                          </Block>
+                  <Block width={width * 0.8} style={{ marginBottom: 5 }}>
+                            <Input
+                              placeholder="Test"
+                              style={styles.inputs}
+                            />
+                          </Block>
+                  <Block width={width * 0.8}>
+                            <Input
+                              placeholder="Test"
+                              style={styles.inputs}
 
+                            />
+                          </Block>
+                    <Block
+                            style={{ marginVertical: theme.SIZES.BASE, marginLeft: 15}}
+                            row
+                            width={width * 0.75}
+                          >
+                            <Checkbox
+                              checkboxStyle={{
+                                borderWidth: 1,
+                                borderRadius: 2,
+                                borderColor: '#E3E3E3'
+                              }}
+                              color={nowTheme.COLORS.PRIMARY}
+                              labelStyle={{
+                                color: nowTheme.COLORS.HEADER,
+                                fontFamily: 'montserrat-regular'
+                              }}
+                              label="J'ai lu et j'accepte les termes et conditions"
+                            />
+                          </Block>
               <Block
                 row
                 style={{
@@ -83,13 +91,13 @@ export default class Onboarding extends React.Component {
                   shadowless
                   style={styles.button}
                   color={nowTheme.COLORS.PRIMARY}
-                  onPress={() => navigation.navigate('App')}
+                  onPress={this._onPressButton}
                 >
                   <Text
                     style={{ fontFamily: 'montserrat-bold', fontSize: 14 }}
                     color={theme.COLORS.WHITE}
                   >
-                    GET STARTED
+                    CALCULEZ
                   </Text>
                 </Button>
               </Block>
@@ -97,13 +105,14 @@ export default class Onboarding extends React.Component {
           </Block>
         </Block>
       </Block>
+      </DismissKeyboard>
     );
   }
 }
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: theme.COLORS.BLACK,
+    backgroundColor: theme.COLORS.WHITE,
     marginTop: Platform.OS === 'android' ? -HeaderHeight : 0
   },
   padded: {
@@ -126,5 +135,10 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     height: 66
-  }
+  },
+  inputs: {
+    borderWidth: 1,
+    borderColor: '#E3E3E3',
+    borderRadius: 21.5
+  },
 });

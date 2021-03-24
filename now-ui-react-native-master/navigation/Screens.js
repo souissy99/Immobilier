@@ -1,18 +1,12 @@
 import React from 'react';
-import { Block } from "galio-framework";
-import { Easing, Animated, Dimensions } from "react-native";
+import { Dimensions } from "react-native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createDrawerNavigator } from "@react-navigation/drawer";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 // screens
 import Home from '../screens/Home';
-import Pro from '../screens/Pro';
 import Profile from '../screens/Profile';
 import Register from '../screens/Register';
-import Components from '../screens/Components';
-import Articles from '../screens/Articles';
 import Onboarding from '../screens/Onboarding';
-import SettingsScreen from '../screens/Settings';
 // drawer
 import CustomDrawerContent from "./Menu";
 // header for screens
@@ -23,28 +17,6 @@ const { width } = Dimensions.get("screen");
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
-
-function ComponentsStack(props) {
-  return (
-    <Stack.Navigator initialRouteName="Components" mode="card" headerMode="screen">
-      <Stack.Screen name="Components" component={Components} options={{
-        header:({ navigation, scene }) => (<Header title="Components" navigation={navigation} scene={scene} />),
-        backgroundColor: "#FFFFFF"
-      }}/>
-    </Stack.Navigator>
-  );
-}
-
-function ArticlesStack(props) {
-  return (
-    <Stack.Navigator initialRouteName="Articles" mode="card" headerMode="screen">
-      <Stack.Screen name="Articles" component={Articles} options={{
-        header: ({ navigation, scene }) => (<Header title="Articles" navigation={navigation} scene={scene} />),
-        backgroundColor: '#FFFFFF'
-      }} />
-    </Stack.Navigator>
-  );
-}
 
 function AccountStack(props) {
   return (
@@ -181,8 +153,6 @@ function AppStack(props) {
       initialRouteName="Home"
     >
       <Drawer.Screen name="Home" component={HomeStack} />
-      <Drawer.Screen name="Components" component={ComponentsStack} />
-      <Drawer.Screen name="Articles" component={ArticlesStack} />
       <Drawer.Screen name="Profile" component={ProfileStack} />
       <Drawer.Screen name="Account" component={AccountStack} />
     </Drawer.Navigator>

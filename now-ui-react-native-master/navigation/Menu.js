@@ -3,9 +3,7 @@ import {
   ScrollView,
   StyleSheet,
   Dimensions,
-  Image,
-  TouchableOpacity,
-  Linking
+  Image
 } from "react-native";
 import { Block, Text, theme } from "galio-framework";
 import { useSafeArea } from "react-native-safe-area-context";
@@ -27,8 +25,6 @@ function CustomDrawerContent({
   const insets = useSafeArea();
   const screens = [
     "Home",
-    "Components",
-    "Articles",
     "Profile",
     "Account",
   ];
@@ -64,15 +60,8 @@ function CustomDrawerContent({
           <Block
             style={{ borderColor: 'white', width: '93%', borderWidth: StyleSheet.hairlineWidth, marginHorizontal: 10}}
           />
-          <Text
-            color={nowTheme.COLORS.WHITE}
-            style={{ marginTop: 30, marginLeft: 20, marginBottom: 10, fontFamily: 'montserrat-regular', fontWeight: '300', fontSize: 12}}
-          >
-            DOCUMENTATION
-          </Text>
         </Block>
-        <DrawerCustomItem title="GETTING STARTED" navigation={navigation}/>
-        <DrawerCustomItem title="LOGOUT" navigation={navigation}/>
+        <DrawerCustomItem title="DECONNEXION" navigation={navigation}/>
         </ScrollView>
       </Block>
     </Block>
