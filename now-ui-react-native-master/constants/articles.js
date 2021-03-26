@@ -22,9 +22,12 @@ export default [
   },
 
   {
-    title: 'The time is now for it to be okay to be',
-    image: require("../assets/imgs/project15.jpg"),
-    cta: 'View article',
+    title: 'Buis-Sur-Damville (27240)',
+    subtitle: 'Tets',
+    image: require("../assets/imgs/test/D29D0749.jpg"),
+    body:
+    'The structured shoulders and sleek detailing ensure a sharp silhouette. Team it with a silk pocket.',
+    cta: '380 000$',
     horizontal: true
   },
   {

@@ -5,12 +5,10 @@ import {
   Dimensions,
   Image
 } from "react-native";
-import { Block, Text, theme } from "galio-framework";
+import { Block, theme } from "galio-framework";
 import { useSafeArea } from "react-native-safe-area-context";
 import Images from "../constants/Images";
 import { DrawerItem as DrawerCustomItem, Icon } from "../components";
-
-import nowTheme from "../constants/Theme";
 
 const { width } = Dimensions.get("screen");
 
@@ -24,9 +22,7 @@ function CustomDrawerContent({
 }) {
   const insets = useSafeArea();
   const screens = [
-    "Home",
-    "Profile",
-    "Account",
+    "Acceuil",
   ];
   return (
     <Block

@@ -7,6 +7,13 @@ import { Block, Text, theme } from 'galio-framework';
 import { nowTheme } from '../constants';
 
 class Card extends React.Component {
+  _onPressCard = () => {
+    return this.props.navigation.navigate('Details', {
+      screen: 'Details',
+      params: { data: this.props.item },
+    });
+  }
+
   render() {
     const {
       navigation,
@@ -36,22 +43,22 @@ class Card extends React.Component {
             <Image resizeMode="cover" source={item.image} style={imageStyles} />
           </Block>
         </TouchableWithoutFeedback>
-        <TouchableWithoutFeedback >
+        <TouchableWithoutFeedback onPress={this._onPressCard}>
           <Block flex space="between" style={styles.cardDescription}>
             <Block flex>
               <Text
                 style={{ fontFamily: 'montserrat-regular' }}
-                size={14}
+                size={22}
                 style={titleStyles}
                 color={nowTheme.COLORS.SECONDARY}
               >
                 {item.title}
               </Text>
               {item.subtitle ? (
-                <Block flex center>
+                <Block flex left>
                   <Text
                     style={{ fontFamily: 'montserrat-regular' }}
-                    size={32}
+                    size={20}
                     color={nowTheme.COLORS.BLACK}
                   >
                     {item.subtitle}
@@ -61,7 +68,7 @@ class Card extends React.Component {
                   <Block />
                 )}
               {item.description ? (
-                <Block flex center>
+                <Block flex>
                   <Text
                     style={{ fontFamily: 'montserrat-regular', textAlign: 'center', padding: 15 }}
                     size={14}
@@ -87,10 +94,10 @@ class Card extends React.Component {
                   <Block />
                 )}
             </Block>
-            <Block right={ctaRight ? true : false}>
+            <Block flex right>
               <Text
                 style={styles.articleButton}
-                size={12}
+                size={30}
                 muted={!ctaColor}
                 color={ctaColor || nowTheme.COLORS.ACTIVE}
                 bold
@@ -125,9 +132,8 @@ const styles = StyleSheet.create({
     marginBottom: 4
   },
   cardTitle: {
-    paddingHorizontal: 9,
     paddingTop: 7,
-    paddingBottom: 15
+    paddingBottom: 10
   },
   cardDescription: {
     padding: theme.SIZES.BASE / 2
@@ -164,7 +170,6 @@ const styles = StyleSheet.create({
   },
   articleButton: {
     fontFamily: 'montserrat-bold',
-    paddingHorizontal: 9,
     paddingVertical: 7
   }
 });

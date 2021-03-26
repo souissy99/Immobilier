@@ -7,16 +7,39 @@ import Home from '../screens/Home';
 import Profile from '../screens/Profile';
 import Register from '../screens/Register';
 import Onboarding from '../screens/Onboarding';
+import Details from '../screens/Details';
 // drawer
 import CustomDrawerContent from "./Menu";
 // header for screens
-import { Header, Icon} from '../components';
-import { nowTheme, tabs } from "../constants";
+import { Header} from '../components';
+import { nowTheme } from "../constants";
 
 const { width } = Dimensions.get("screen");
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
+
+function DetailsStack(props) {
+  return (
+    <Stack.Navigator initialRouteName="Details" mode="card" headerMode="screen">
+      <Stack.Screen
+        name="Details"
+        component={Details}
+        options={{
+          header: ({ navigation, scene }) => (
+            <Header 
+              transparent
+              title="Details"
+              navigation={navigation}
+              scene={scene}
+            />
+          ),
+          headerTransparent: true
+        }}
+      />
+    </Stack.Navigator>
+  );
+}
 
 function AccountStack(props) {
   return (
@@ -60,23 +83,6 @@ function ProfileStack(props) {
           headerTransparent: true
         }}
       />
-      <Stack.Screen
-        name="Pro"
-        component={Pro}
-        options={{
-          header: ({ navigation, scene }) => (
-            <Header
-              title=""
-              back
-              white
-              transparent
-              navigation={navigation}
-              scene={scene}
-            />
-          ),
-          headerTransparent: true
-        }}
-      />
     </Stack.Navigator>
   );
 }
@@ -85,12 +91,12 @@ function HomeStack(props) {
   return (
     <Stack.Navigator mode="card" headerMode="screen">
       <Stack.Screen
-        name="Home"
+        name="Acceuil"
         component={Home}
         options={{
           header: ({ navigation, scene }) => (
             <Header
-              title="Home"
+              title="Acceuil"
               search
               options
               navigation={navigation}
@@ -98,23 +104,6 @@ function HomeStack(props) {
             />
           ),
           cardStyle: { backgroundColor: "#FFFFFF" }
-        }}
-      />
-      <Stack.Screen
-        name="Pro"
-        component={Pro}
-        options={{
-          header: ({ navigation, scene }) => (
-            <Header
-              title=""
-              back
-              white
-              transparent
-              navigation={navigation}
-              scene={scene}
-            />
-          ),
-          headerTransparent: true
         }}
       />
     </Stack.Navigator>
@@ -150,11 +139,12 @@ function AppStack(props) {
           fontWeight: "normal"
         }
       }}
-      initialRouteName="Home"
+      initialRouteName="Acceuil"
     >
-      <Drawer.Screen name="Home" component={HomeStack} />
+      <Drawer.Screen name="Acceuil" component={HomeStack} />
       <Drawer.Screen name="Profile" component={ProfileStack} />
       <Drawer.Screen name="Account" component={AccountStack} />
+      <Drawer.Screen name="Details" component={DetailsStack} />
     </Drawer.Navigator>
   );
 }

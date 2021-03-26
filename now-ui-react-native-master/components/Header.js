@@ -1,10 +1,10 @@
 import React from 'react';
 import { withNavigation } from '@react-navigation/compat';
-import { TouchableOpacity, StyleSheet, Platform, Dimensions, Keyboard } from 'react-native';
+import { TouchableOpacity, StyleSheet, Platform, Dimensions } from 'react-native';
 import { Button, Block, NavBar, Text, theme, Button as GaButton } from 'galio-framework';
+import ModalDropdown from 'react-native-modal-dropdown';
 
 import Icon from './Icon';
-import Input from './Input';
 import Tabs from './Tabs';
 import nowTheme from '../constants/Theme';
 
@@ -56,7 +56,7 @@ class Header extends React.Component {
     }
 
     switch (title) {
-      case 'Home':
+      case 'Acceuil':
         return [
           <BellButton key="chat-home" navigation={navigation} isWhite={white} />,
           <BasketButton key="basket-home" navigation={navigation} isWhite={white} />
@@ -116,14 +116,14 @@ class Header extends React.Component {
         >
           <Block row middle>
             <Icon
-              name="bulb"
-              family="NowExtra"
+              name="sort"
+              family="material-icons"
               size={18}
               style={{ paddingRight: 8 }}
               color={nowTheme.COLORS.HEADER}
             />
             <Text style={{ fontFamily: 'montserrat-regular' }} size={16} style={styles.tabTitle}>
-              {optionLeft || 'Beauty'}
+              {optionLeft || 'Trier'}
             </Text>
           </Block>
         </Button>
@@ -131,13 +131,13 @@ class Header extends React.Component {
           <Block row middle>
             <Icon
               size={18}
-              name="bag-162x"
-              family="NowExtra"
+              name="filter"
+              family="feather"
               style={{ paddingRight: 8 }}
               color={nowTheme.COLORS.HEADER}
             />
             <Text style={{ fontFamily: 'montserrat-regular' }} size={16} style={styles.tabTitle}>
-              {optionRight || 'Fashion'}
+              {optionRight || 'Filtrer'}
             </Text>
           </Block>
         </Button>

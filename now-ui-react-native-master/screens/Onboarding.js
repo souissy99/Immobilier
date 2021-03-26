@@ -1,5 +1,5 @@
 import React from 'react';
-import { ImageBackground, Image, StyleSheet, StatusBar, Dimensions, Platfor, TouchableWithoutFeedback, Keyboard} from 'react-native';
+import { Image, StyleSheet, StatusBar, Dimensions, TouchableWithoutFeedback, Keyboard} from 'react-native';
 import { Block, Button, Text, Checkbox, theme } from 'galio-framework';
 
 const { height, width } = Dimensions.get('screen');
@@ -13,7 +13,6 @@ const DismissKeyboard = ({ children }) => (
 
 export default class Onboarding extends React.Component {
   _onPressButton = () => {
-    alert('You tapped the button!')
     return this.props.navigation.navigate('App')
   }
   
