@@ -1,8 +1,7 @@
 import React from 'react';
 import { withNavigation } from '@react-navigation/compat';
-import { TouchableOpacity, StyleSheet, Platform, Dimensions } from 'react-native';
+import { TouchableOpacity, StyleSheet, Platform, Dimensions, Modal, Pressable } from 'react-native';
 import { Button, Block, NavBar, Text, theme, Button as GaButton } from 'galio-framework';
-import ModalDropdown from 'react-native-modal-dropdown';
 
 import Icon from './Icon';
 import Tabs from './Tabs';
@@ -40,10 +39,19 @@ const BasketButton = ({ isWhite, style, navigation }) => (
 
 
 class Header extends React.Component {
+  state = {
+    modalVisible: false
+  };
+
+  setModalVisible = (visible) => {
+    this.setState({ modalVisible: visible });
+  }
+
   handleLeftPress = () => {
     const { back, navigation } = this.props;
     return back ? navigation.goBack() : navigation.openDrawer();
   };
+
   renderRight = () => {
     const { white, title, navigation } = this.props;
     
@@ -107,12 +115,14 @@ class Header extends React.Component {
   };
   renderOptions = () => {
     const { navigation, optionLeft, optionRight } = this.props;
+    const { modalVisible } = this.state;
 
     return (
       <Block row style={styles.options}>
         <Button
           shadowless
           style={[styles.tab, styles.divider]}
+          onPress={() => this.setModalVisible(true)}
         >
           <Block row middle>
             <Icon
@@ -127,7 +137,60 @@ class Header extends React.Component {
             </Text>
           </Block>
         </Button>
-        <Button shadowless style={styles.tab} >
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={modalVisible}
+          onRequestClose={() => {
+            Alert.alert("Modal has been closed.");
+            this.setModalVisible(!modalVisible);
+          }}
+        >
+          <Block flex center>
+            <Block style={styles.modalView}>
+              <Block>
+                <Text>Type de bien</Text>
+              </Block>
+              <Block style={{
+                width: '100%',
+                borderTopColor: 'grey',
+                borderTopWidth: 1,
+              }}>
+                <Text>Surface</Text>
+              </Block>
+              <Block style={{
+                width: '100%',
+                borderTopColor: 'grey',
+                borderTopWidth: 1,
+              }}>
+                <Text>Nombre de chambres</Text>
+              </Block>
+              <Block style={{
+                width: '100%',
+                borderTopColor: 'grey',
+                borderTopWidth: 1,
+              }}>
+                <Text>Nombre de pièces</Text>
+              </Block>
+              <Block style={{
+                width: '100%',
+                borderTopColor: 'grey',
+                borderTopWidth: 1,
+              }}>
+                <Text>Surface terrain</Text>
+              </Block>
+            </Block>
+            <Pressable
+                onPress={() => this.setModalVisible(!modalVisible)}
+              >
+                <Text>Hide Modal</Text>
+              </Pressable>
+          </Block>
+        </Modal>
+        <Button
+        shadowless
+        style={styles.tab}
+        onPress={() => this.setModalVisible(true)}>
           <Block row middle>
             <Icon
               size={18}
@@ -159,6 +222,7 @@ class Header extends React.Component {
       />
     );
   };
+
   renderHeader = () => {
     const { search, options, tabs } = this.props;
     if (search || tabs || options) {
@@ -228,6 +292,23 @@ const styles = StyleSheet.create({
     padding: 12,
     position: 'relative'
   },
+  modalView: {
+    margin: 20,
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 35,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+    width: width,
+    height: height
+  },
   title: {
     width: '100%',
     fontSize: 16,
@@ -286,7 +367,7 @@ const styles = StyleSheet.create({
     elevation: 0
   },
   tabTitle: {
-    lineHeight: 19,
+    lineHeight: 20,
     fontWeight: '400',
     color: nowTheme.COLORS.HEADER
   },

@@ -34,7 +34,7 @@ function DetailsStack(props) {
               scene={scene}
             />
           ),
-          headerTransparent: true
+          headerTransparent: false
         }}
       />
     </Stack.Navigator>
@@ -97,7 +97,6 @@ function HomeStack(props) {
           header: ({ navigation, scene }) => (
             <Header
               title="Acceuil"
-              search
               options
               navigation={navigation}
               scene={scene}
