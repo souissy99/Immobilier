@@ -1,6 +1,6 @@
 import React from 'react';
 import { withNavigation } from '@react-navigation/compat';
-import { StyleSheet,Dimensions, TouchableWithoutFeedback, View, Modal, Pressable } from 'react-native';
+import { StyleSheet,Dimensions, TouchableWithoutFeedback, View, Modal, Keyboard } from 'react-native';
 import { Block, Text, theme, Button } from 'galio-framework';
 
 import { nowTheme } from '../constants/';
@@ -10,13 +10,18 @@ import { Input, Icon } from '../components';
 
 const { width, height } = Dimensions.get('screen');
 
+const DismissKeyboard = ({ children }) => (
+  <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>{children}</TouchableWithoutFeedback>
+);
+
 class CalculatorForm extends React.Component {
 
   constructor(props) {
     super(props);
     this.state = {
-        modalVisible: false,
-        options: [
+      modalRevenusVisible: false,
+      modalChargesVisible: false,
+      options: [
             {
                 id: 1,
                 title: 'Seul',
@@ -28,24 +33,47 @@ class CalculatorForm extends React.Component {
                 checked: false
             }
         ],
-        formData: {
-          revenusEmp: 0,
-          revenusCoemp: 0,
-          primesEmp: 0,
-          primesCoemp: 0,
-          totalCharges: 0,
-          totalRevenus: 0,
-        },
+      formData: {
+        revenusEmp: 0,
+        revenusCoemp: 0,
+        primesEmp: 0,
+        primesCoemp: 0,
+        totalCharges: 0,
+        totalRevenus: 0,
+      },
+      chargesData: {
+        pension: 0,
+        loyer: 0,
+        pretLocatif: 0,
+        pretImmo: 0,
+        creditConso: 0,
+        creditAuto: 0,
+        autreCredit: 0,
+      },
+      revenusData: {
+        revenusFin: 0,
+        alloc: 0,
+        revenusLoc: 0,
+        pension: 0,
+      },
     };
   }
 
-  setModalVisible = (visible) => {
-    this.setState({ modalVisible: visible });
+  onChangeText = (key, val) => {
+    this.setState({ [key]: val })
+    console.log(val)
   }
 
   checkThisBox = (itemId) => {
     const updatedList = this.state.options.map( item => item.id === itemId ?  {...item, checked:true} :  {...item, checked:false} );
     this.setState({options:updatedList})
+ }
+
+ calculRedirect = () => {
+  return this.props.navigation.navigate('Details', {
+    screen: 'Details',
+    params: { data: this.props.item },
+  });
  }
 
   renderSingleForm = () => {
@@ -59,6 +87,8 @@ class CalculatorForm extends React.Component {
             right
             placeholder="0"
             style={styles.inputs}
+            type="number-pad"
+            onChangeText={val => this.onChangeText('formData.revenusEmp', val)}
             iconContent={
               <Text>€ / mois</Text>
              }
@@ -70,6 +100,8 @@ class CalculatorForm extends React.Component {
             right
             placeholder="0"
             style={styles.inputs}
+            type="number-pad"
+            onChangeText={val => this.onChangeText('formData.primesEmp', val)}
             iconContent={
               <Text>€ / an</Text>
              }
@@ -91,6 +123,8 @@ class CalculatorForm extends React.Component {
             right
             placeholder="0"
             style={styles.inputs}
+            type="number-pad"
+            onChangeText={val => this.onChangeText('formData.revenusEmp', val)}
             iconContent={
               <Text>€ / mois</Text>
              }
@@ -102,6 +136,8 @@ class CalculatorForm extends React.Component {
             right
             placeholder="0"
             style={styles.inputs}
+            type="number-pad"
+            onChangeText={val => this.onChangeText('formData.primesEmp', val)}
             iconContent={
               <Text>€ / an</Text>
              }
@@ -117,6 +153,8 @@ class CalculatorForm extends React.Component {
                 right
                 placeholder="0"
                 style={styles.inputs}
+                type="number-pad"
+                onChangeText={val => this.onChangeText('formData.revenusCoemp', val)}
                 iconContent={
                   <Text>€ / mois</Text>
                  }
@@ -128,6 +166,8 @@ class CalculatorForm extends React.Component {
                 right
                 placeholder="0"
                 style={styles.inputs}
+                type="number-pad"
+                onChangeText={val => this.onChangeText('formData.primesCoemp', val)}
                 iconContent={
                   <Text>€ / an</Text>
                  }
@@ -166,11 +206,11 @@ class CalculatorForm extends React.Component {
   };
 
   renderCharges = () => {
-    const { modalVisible } = this.state;
+    const { modalChargesVisible } = this.state;
     
-    return (    
-    <Block>
-      <Button color="primary" round style={styles.formButton} onPress={() => this.setModalVisible(!modalVisible)}>
+    return (
+    <Block flex={0.3}>
+      <Button color="primary" round style={styles.formButton} onPress={() => this.setState({ modalChargesVisible: !modalChargesVisible })}>
         <Block row middle>
             <Icon
               name="pluscircleo"
@@ -192,23 +232,116 @@ class CalculatorForm extends React.Component {
       <Modal
           animationType="slide"
           transparent={true}
-          visible={modalVisible}
+          visible={modalChargesVisible}
           onRequestClose={() => {
-            this.setModalVisible(!modalVisible);
+            this.setState({ modalChargesVisible: !modalChargesVisible })
           }}
         >
-          <Block center>
+          <DismissKeyboard>
+            <Block center>
             <Block style={styles.modalView}>
               <Block flex>
                 <Text>Charges</Text>
-                <Pressable
-                  onPress={() => this.setModalVisible(!modalVisible)}
-                >
-                  <Text>Hide Modal</Text>
-                </Pressable>
+                <Block style={styles.name}>
+                  <Block width={width * 0.4} style={{ marginBottom: 5, marginRight: 2 }}>
+                    <Input
+                      label="Pension versée :"
+                      right
+                      placeholder="0"
+                      style={styles.inputs}
+                      type="number-pad"
+                      onChangeText={val => this.onChangeText('chargesData.pension', val)}
+                      iconContent={
+                        <Text>€ / mois</Text>
+                      }
+                    />
+                  </Block>
+                  <Block width={width * 0.4} style={{ marginBottom: 5, marginRight: 2 }}>
+                    <Input
+                      label="Loyer :"
+                      right
+                      placeholder="0"
+                      style={styles.inputs}
+                      type="number-pad"
+                      onChangeText={val => this.onChangeText('chargesData.loyer', val)}
+                      iconContent={
+                        <Text>€ / mois</Text>
+                      }
+                    />
+                  </Block>
+                </Block>
+                <Block style={styles.name}>
+                  <Block width={width * 0.4} style={{ marginBottom: 5, marginRight: 2 }}>
+                    <Input
+                      label="Prêt locatif :"
+                      right
+                      placeholder="0"
+                      style={styles.inputs}
+                      type="number-pad"
+                      onChangeText={val => this.onChangeText('chargesData.pretLocatif', val)}
+                      iconContent={
+                        <Text>€ / mois</Text>
+                      }
+                    />
+                  </Block>
+                  <Block width={width * 0.4} style={{ marginBottom: 5, marginRight: 2 }}>
+                    <Input
+                      label="Prêt immobilier :"
+                      right
+                      placeholder="0"
+                      style={styles.inputs}
+                      type="number-pad"
+                      onChangeText={val => this.onChangeText('chargesData.pretImmo', val)}
+                      iconContent={
+                        <Text>€ / mois</Text>
+                      }
+                    />
+                  </Block>
+                </Block>
+                <Block style={styles.name}>
+                  <Block width={width * 0.4} style={{ marginBottom: 5, marginRight: 2 }}>
+                    <Input
+                      label="Crédit à la consommation :"
+                      right
+                      placeholder="0"
+                      style={styles.inputs}
+                      type="number-pad"
+                      onChangeText={val => this.onChangeText('chargesData.creditConso', val)}
+                      iconContent={
+                        <Text>€ / mois</Text>
+                      }
+                    />
+                  </Block>
+                  <Block width={width * 0.4} style={{ marginBottom: 5, marginRight: 2 }}>
+                    <Input
+                      label="Crédit Auto/Moto :"
+                      right
+                      placeholder="0"
+                      style={styles.inputs}
+                      type="number-pad"
+                      onChangeText={val => this.onChangeText('chargesData.creditAuto', val)}
+                      iconContent={
+                        <Text>€ / mois</Text>
+                      }
+                    />
+                  </Block>
+                </Block>
+                <Block width={width * 0.5}>
+                  <Input
+                    label="Autre(s) crédit(s) :"
+                    right
+                    placeholder="0"
+                    style={styles.inputs}
+                    type="number-pad"
+                    onChangeText={val => this.onChangeText('chargesData.autreCredit', val)}
+                    iconContent={
+                      <Text>€ / mois</Text>
+                    }
+                  />
+                </Block>
               </Block>
-              <Block flex={0.1} center>
-                <Button color="primary" round style={styles.createButton} onPress={() => this.setModalVisible(!modalVisible)}>
+              <Block flex={0.2} center>
+                <Button color="primary" round style={styles.createButton} onPress={() => this.setState({ modalChargesVisible: !modalChargesVisible })}>
                   <Text
                     style={{ fontFamily: 'montserrat-bold' }}
                     size={14}
@@ -220,16 +353,18 @@ class CalculatorForm extends React.Component {
               </Block>
             </Block>
           </Block>
+          </DismissKeyboard>  
         </Modal>
     </Block>
     )
   };
 
   renderRevenus = () => {
-    const { modalVisible } = this.state;
+    const { modalRevenusVisible } = this.state;
+    
     return(
-    <Block>
-      <Button color="primary" round style={styles.formButton} onPress={() => this.setModalVisible(!modalVisible)}>
+    <Block flex={0.3}>
+      <Button color="primary" round style={styles.formButton} onPress={() => this.setState({ modalRevenusVisible: !modalRevenusVisible })}>
         <Block row middle>
             <Icon
               name="pluscircleo"
@@ -251,23 +386,71 @@ class CalculatorForm extends React.Component {
         <Modal
           animationType="slide"
           transparent={true}
-          visible={modalVisible}
+          visible={modalRevenusVisible}
           onRequestClose={() => {
-            this.setModalVisible(!modalVisible);
+            this.setState({ modalRevenusVisible: !modalRevenusVisible })
           }}
         >
+          <DismissKeyboard>
           <Block center>
             <Block style={styles.modalView}>
               <Block flex>
                 <Text>Revenus</Text>
-                <Pressable
-                  onPress={() => this.setModalVisible(!modalVisible)}
-                >
-                  <Text>Hide Modal</Text>
-                </Pressable>
+                <Block width={width * 0.5}>
+                  <Input
+                    label="Revenus financiers :"
+                    right
+                    placeholder="0"
+                    style={styles.inputs}
+                    type="number-pad"
+                    onChangeText={val => this.onChangeText('revenusData.revenusFin', val)}
+                    iconContent={
+                      <Text>€ / mois</Text>
+                    }
+                  />
+                </Block>
+                <Block width={width * 0.5}>
+                  <Input
+                    label="Allocations familiales :"
+                    right
+                    placeholder="0"
+                    style={styles.inputs}
+                    type="number-pad"
+                    onChangeText={val => this.onChangeText('revenusData.alloc', val)}
+                    iconContent={
+                      <Text>€ / mois</Text>
+                    }
+                  />
+                </Block>
+                <Block width={width * 0.5}>
+                  <Input
+                    label="Revenus locatifs existants :"
+                    right
+                    placeholder="0"
+                    style={styles.inputs}
+                    type="number-pad"
+                    onChangeText={val => this.onChangeText('revenusData.revenusLoc', val)}
+                    iconContent={
+                      <Text>€ / mois</Text>
+                    }
+                  />
+                </Block>
+                <Block width={width * 0.5}>
+                  <Input
+                    label="Pension alimentaire reçue :"
+                    right
+                    placeholder="0"
+                    style={styles.inputs}
+                    type="number-pad"
+                    onChangeText={val => this.onChangeText('revenusData.pension', val)}
+                    iconContent={
+                      <Text>€ / mois</Text>
+                    }
+                  />
+                </Block>
               </Block>
-              <Block flex={0.1} center>
-                <Button color="primary" round style={styles.createButton} onPress={() => this.setModalVisible(!modalVisible)}>
+              <Block flex={0.2} center>
+                <Button color="primary" round style={styles.createButton} onPress={() => this.setState({ modalRevenusVisible: !modalRevenusVisible })}>
                   <Text
                     style={{ fontFamily: 'montserrat-bold' }}
                     size={14}
@@ -279,6 +462,7 @@ class CalculatorForm extends React.Component {
               </Block>
             </Block>
           </Block>
+          </DismissKeyboard>
         </Modal>
     </Block>
     )
@@ -321,7 +505,7 @@ class CalculatorForm extends React.Component {
                   {this.renderRevenus()}
               </Block>
               <Block center>
-                <Button color="primary" round style={styles.createButton}>
+                <Button color="primary" round style={styles.createButton} onPress={() => this.calculRedirect()}>
                   <Text
                     style={{ fontFamily: 'montserrat-bold' }}
                     size={14}
@@ -344,7 +528,7 @@ const styles = StyleSheet.create({
     marginTop: '30%',
     backgroundColor: "white",
     borderRadius: 20,
-    padding: 35,
+    padding: 10,
     alignItems: "center",
     shadowColor: "#000",
     shadowOffset: {
@@ -384,7 +568,7 @@ const styles = StyleSheet.create({
     formButton: {
       width: width * 0.4,
       marginTop: 20,
-      marginBottom: 40
+      marginBottom: 20
     },
     social: {
       width: theme.SIZES.BASE * 3.5,
