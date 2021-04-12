@@ -1,10 +1,11 @@
 import React from 'react';
 import { StyleSheet, StatusBar, Dimensions, TouchableWithoutFeedback, Keyboard, ImageBackground, TouchableHighlight } from 'react-native';
 import { Block, Button, Text, Checkbox, theme, Button as GaButton } from 'galio-framework';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import { Images, nowTheme } from '../constants/';
-import { Input, Icon } from '../components';
-import CalculatorForm from '../components/CalculatorForm';
+import { Images, nowTheme, api } from '../constants/';
+import { Input, Icon,CalculatorForm } from '../components';
+import { isLoading } from 'expo-font';
 
 const DismissKeyboard = ({ children }) => (
   <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>{children}</TouchableWithoutFeedback>
@@ -12,17 +13,32 @@ const DismissKeyboard = ({ children }) => (
 
 const { width, height } = Dimensions.get('screen');
 
+const storeData = async (key, value) => {
+  try {
+    const jsonValue = JSON.stringify(value)
+    await AsyncStorage.setItem(key, jsonValue)
+    console.log('stored')
+  } catch (e) {
+    console.log(e)
+  }
+}
+
 export default class Onboarding extends React.Component {
 
   state = {
     loginView: true,
+    isLoading: false,
     calculatorView: false,
-    lastName: '',
+    firstName: '',
     lastName: '',
     email: '',
     address: '',
     password: '',
     passwordCheck: '',
+  }
+
+  onChangeText = (key, val) => {
+    this.setState({ [key]: val })
   }
   
   loginRedirect = () => {
@@ -30,10 +46,85 @@ export default class Onboarding extends React.Component {
   }
 
   registerValidation = () => {
-    this.setState({calculatorView: !this.state.calculatorView})
+    this.setState({isLoading: true})
+    const { firstName, lastName, email, address, password, passwordCheck } = this.state
+
+    if(!firstName || !lastName || !email || !address || !password || !passwordCheck) {
+      console.log('remplir tout les champs')
+      this.setState({isLoading: false})
+    }
+    else {
+        fetch(api.url + 'app/signup', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                firstname: firstName,
+                lastname: lastName,
+                address: address,
+                email: email,
+                password: password,
+            })
+        })
+        .then(response => {
+          const statusCode = response.status;
+          const data = response.json();
+          return Promise.all([statusCode, data]);
+        }).then(([res, data]) => {
+          if(res == 200) {
+            storeData('@user', data)
+            this.setState({isLoading: false})
+            this.setState({calculatorView: !this.state.calculatorView})
+          }
+        })
+        .catch((error) => {
+          this.setState({isLoading: false})
+          console.error(error);
+        })
+    }
   }
 
+  loginValidation = () => {
+    this.setState({isLoading: true})
+    const { email, password } = this.state
+
+    if(!email || !password) {
+        console.log('remplir tout les champs')
+        this.setState({isLoading: false})
+    }
+    else {
+        fetch(api.url + 'app/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                email: email,
+                password: password,
+            })
+        })
+        .then(response => {
+          const statusCode = response.status;
+          const data = response.json();
+          return Promise.all([statusCode, data]);
+        }).then(([res, data]) => {
+          if(res == 200) {
+            storeData('@user', data)
+            this.setState({isLoading: false})
+            return this.props.navigation.navigate('App');
+          }
+        })
+        .catch((error) => {
+          this.setState({isLoading: false})
+            console.error(error);
+        })
+    }
+  }
+
+
   renderRegisterForm = () => {
+    const { isLoading } = this.state;
 
     return (
     <Block flex space="evenly">
@@ -58,6 +149,7 @@ export default class Onboarding extends React.Component {
                 <Input
                   placeholder="Prénom"
                   style={styles.inputs}
+                  onChangeText={val => this.onChangeText('firstName', val)}
                   iconContent={
                     <Icon
                       size={16}
@@ -73,6 +165,7 @@ export default class Onboarding extends React.Component {
                 <Input
                   placeholder="Nom"
                   style={styles.inputs}
+                  onChangeText={val => this.onChangeText('lastName', val)}
                   iconContent={
                     <Icon
                       size={16}
@@ -89,6 +182,9 @@ export default class Onboarding extends React.Component {
                 <Input
                   placeholder="Email"
                   style={styles.inputs}
+                  type="email-address"
+                  textContentType="emailAddress"
+                  onChangeText={val => this.onChangeText('email', val)}
                   iconContent={
                     <Icon
                       size={16}
@@ -104,6 +200,8 @@ export default class Onboarding extends React.Component {
               <Input
                   placeholder="Addresse"
                   style={styles.inputs}
+                  textContentType="fullStreetAddress"
+                  onChangeText={val => this.onChangeText('address', val)}
                   iconContent={
                     <Icon
                       size={16}
@@ -119,6 +217,7 @@ export default class Onboarding extends React.Component {
               <Input
                   placeholder="Mot de passe"
                   style={styles.inputs}
+                  onChangeText={val => this.onChangeText('password', val)}
                   password
                   iconContent={
                     <Icon
@@ -135,6 +234,7 @@ export default class Onboarding extends React.Component {
               <Input
                   placeholder="Confirmez votre mot de passe"
                   style={styles.inputs}
+                  onChangeText={val => this.onChangeText('passwordCheck', val)}
                   password
                   iconContent={
                     <Icon
@@ -168,7 +268,7 @@ export default class Onboarding extends React.Component {
               </Block>
             </Block>
             <Block center>
-              <Button color="primary" round style={styles.createButton} onPress={this.registerValidation}>
+              <Button color="primary" round style={styles.createButton} onPress={this.registerValidation} loading={isLoading}>
                 <Text
                   style={{ fontFamily: 'montserrat-bold' }}
                   size={14}
@@ -195,6 +295,8 @@ export default class Onboarding extends React.Component {
   };
 
   renderLoginForm = () => {
+    const { isLoading } = this.state;
+
     return (
     <Block flex space="evenly">
       <Block flex={0.4} middle style={styles.socialConnect}>
@@ -219,6 +321,9 @@ export default class Onboarding extends React.Component {
                 <Input
                   placeholder="Email"
                   style={styles.inputs}
+                  type="email-address"
+                  textContentType="emailAddress"
+                  onChangeText={val => this.onChangeText('email', val)}
                   iconContent={
                     <Icon
                       size={16}
@@ -234,6 +339,7 @@ export default class Onboarding extends React.Component {
               <Input
                   placeholder="Mot de passe"
                   style={styles.inputs}
+                  onChangeText={val => this.onChangeText('password', val)}
                   password
                   iconContent={
                     <Icon
@@ -248,7 +354,7 @@ export default class Onboarding extends React.Component {
               </Block>
             </Block>
             <Block center>
-              <Button color="primary" round style={styles.createButton}>
+              <Button color="primary" round style={styles.createButton} onPress={this.loginValidation} loading={isLoading}>
                 <Text
                   style={{ fontFamily: 'montserrat-bold' }}
                   size={14}

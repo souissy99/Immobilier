@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { StyleSheet, Image, TouchableWithoutFeedback } from 'react-native';
 import { Block, Text, theme } from 'galio-framework';
 
-import { nowTheme } from '../constants';
+import { nowTheme, Images } from '../constants';
 
 class Card extends React.Component {
   _onPressCard = () => {
@@ -40,7 +40,7 @@ class Card extends React.Component {
       <Block row={horizontal} card flex style={cardContainer}>
         <TouchableWithoutFeedback>
           <Block flex style={imgContainer}>
-            <Image resizeMode="cover" source={item.image} style={imageStyles} />
+            <Image resizeMode="cover" source={item.medias != null ? {uri: item.medias.thumb} : Images.noPhoto} style={imageStyles} />
           </Block>
         </TouchableWithoutFeedback>
         <TouchableWithoutFeedback onPress={this._onPressCard}>
@@ -70,9 +70,10 @@ class Card extends React.Component {
               {item.description ? (
                 <Block flex>
                   <Text
-                    style={{ fontFamily: 'montserrat-regular', textAlign: 'center', padding: 15 }}
+                    style={{ fontFamily: 'montserrat-regular', textAlign: 'left', padding: 5 }}
                     size={14}
-                    color={"#9A9A9A"}
+                    color={nowTheme.COLORS.SECONDARY}
+                    numberOfLines={5}
                   >
                     {item.description}
                   </Text>
@@ -102,7 +103,7 @@ class Card extends React.Component {
                 color={ctaColor || nowTheme.COLORS.ACTIVE}
                 bold
               >
-                {item.cta}
+                {item.price ? item.price : '-'} €
               </Text>
             </Block>
           </Block>

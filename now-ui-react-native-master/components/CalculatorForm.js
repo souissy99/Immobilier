@@ -4,7 +4,6 @@ import { StyleSheet,Dimensions, TouchableWithoutFeedback, View, Modal, Keyboard 
 import { Block, Text, theme, Button } from 'galio-framework';
 
 import { nowTheme } from '../constants/';
-import Checkbox from '../components/Checkbox.js';
 import { Input, Icon } from '../components';
 
 
@@ -61,7 +60,6 @@ class CalculatorForm extends React.Component {
 
   onChangeText = (key, val) => {
     this.setState({ [key]: val })
-    console.log(val)
   }
 
   checkThisBox = (itemId) => {
@@ -70,10 +68,7 @@ class CalculatorForm extends React.Component {
  }
 
  calculRedirect = () => {
-  return this.props.navigation.navigate('Details', {
-    screen: 'Details',
-    params: { data: this.props.item },
-  });
+  return this.props.navigation.navigate('App');
  }
 
   renderSingleForm = () => {
@@ -209,7 +204,7 @@ class CalculatorForm extends React.Component {
     const { modalChargesVisible } = this.state;
     
     return (
-    <Block flex={0.3}>
+    <Block>
       <Button color="primary" round style={styles.formButton} onPress={() => this.setState({ modalChargesVisible: !modalChargesVisible })}>
         <Block row middle>
             <Icon
@@ -363,7 +358,7 @@ class CalculatorForm extends React.Component {
     const { modalRevenusVisible } = this.state;
     
     return(
-    <Block flex={0.3}>
+    <Block>
       <Button color="primary" round style={styles.formButton} onPress={() => this.setState({ modalRevenusVisible: !modalRevenusVisible })}>
         <Block row middle>
             <Icon

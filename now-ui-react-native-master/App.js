@@ -7,8 +7,10 @@ import { Block, GalioProvider } from 'galio-framework';
 import { NavigationContainer } from '@react-navigation/native';
 
 import Screens from './navigation/Screens';
-import { Images, articles, nowTheme } from './constants';
-
+import { Images, nowTheme } from './constants';
+import { LogBox } from 'react-native';
+LogBox.ignoreLogs(['Warning: ...']); // Ignore log notification by message
+LogBox.ignoreAllLogs();//Ignore all log notifications
 // cache app images
 const assetImages = [
   Images.Onboarding,
@@ -25,7 +27,6 @@ const assetImages = [
 ];
 
 // cache product images
-articles.map(article => assetImages.push(article.image));
 
 function cacheImages(images) {
   return images.map(image => {

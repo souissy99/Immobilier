@@ -1,10 +1,11 @@
 import React from 'react';
 import { withNavigation } from '@react-navigation/compat';
-import { TouchableOpacity, StyleSheet, Platform, Dimensions, Modal, Pressable } from 'react-native';
-import { Button, Block, NavBar, Text, theme, Button as GaButton } from 'galio-framework';
+import { TouchableOpacity, StyleSheet, Platform, Dimensions, Modal,TouchableWithoutFeedback, View } from 'react-native';
+import { Button, Block, NavBar, Text, theme, Button as GaButton, Checkbox } from 'galio-framework';
 
 import Icon from './Icon';
 import Tabs from './Tabs';
+import { Input } from '../components';
 import nowTheme from '../constants/Theme';
 
 const { height, width } = Dimensions.get('window');
@@ -36,15 +37,36 @@ const BasketButton = ({ isWhite, style, navigation }) => (
   </TouchableOpacity>
 );
 
-
-
 class Header extends React.Component {
   state = {
-    modalVisible: false
+    modalFilterVisible: false,
+    modalSortVisible: false,
+    type: [
+      {
+          id: 1,
+          title: 'Maison',
+          checked: false
+      },
+      {
+          id: 2,
+          title: 'Appartement',
+          checked: false
+      }
+    ],
+    surfaceMin: 0,
+    surfaceMax: 0,
   };
 
-  setModalVisible = (visible) => {
-    this.setState({ modalVisible: visible });
+  checkThisBox = (itemId, checked) => {
+    this.setState(prevState => ({
+      type: prevState.type.map(
+      obj => (obj.id === itemId ? Object.assign(obj, { checked: !checked }) : obj)
+    )
+  }));
+  }
+
+  onChangeText = (key, val) => {
+    this.setState({ [key]: val })
   }
 
   handleLeftPress = () => {
@@ -113,9 +135,36 @@ class Header extends React.Component {
         break;
     }
   };
+
+  renderCheckbox = (id, label, checked) => {
+    return (
+      <TouchableWithoutFeedback
+        onPress={() => {
+          this.checkThisBox(id, checked);
+        }}
+      >
+        <View
+          style={styles.checkboxContainer}
+        >
+          <Icon
+            name={checked ? 'check-square' : 'square'}
+            family="feather"
+            size={20}
+            color={nowTheme.COLORS.PRIMARY}
+          />
+          <View
+            style={{ marginLeft: 5 }}
+          >
+            <Text>{'' + label}</Text>
+          </View>
+        </View>
+      </TouchableWithoutFeedback>
+    )
+  };
+
   renderOptions = () => {
     const { navigation, optionLeft, optionRight } = this.props;
-    const { modalVisible } = this.state;
+    const { modalFilterVisible } = this.state;
 
     return (
       <Block row style={styles.options}>
@@ -140,57 +189,81 @@ class Header extends React.Component {
         <Modal
           animationType="slide"
           transparent={true}
-          visible={modalVisible}
+          visible={modalFilterVisible}
           onRequestClose={() => {
-            Alert.alert("Modal has been closed.");
-            this.setModalVisible(!modalVisible);
+            this.setState({ modalFilterVisible: !modalFilterVisible })
           }}
         >
           <Block flex center>
             <Block style={styles.modalView}>
-              <Block>
-                <Text>Type de bien</Text>
+              <Block style={styles.lined}>
+                <Text style={styles.titleFilter}>Type de bien</Text>
+                  <Block>
+                    {this.state.type.map((opt) => (
+                      <Block width={width * 0.4} style={{ marginBottom: 5, marginRight: 2 }}>
+                        {this.renderCheckbox(opt.id, opt.title, opt.checked)}
+                      </Block>
+                      )
+                    )}
+                  </Block>
               </Block>
-              <Block style={{
-                width: '100%',
-                borderTopColor: 'grey',
-                borderTopWidth: 1,
-              }}>
-                <Text>Surface</Text>
+              <Block style={styles.lined}>
+                <Text style={styles.titleFilter}>Surface</Text>
+                <Block style={styles.name}>
+                <Block width={width * 0.4}>
+                  <Input
+                      right
+                      placeholder="Surface max"
+                      style={styles.inputs}
+                      type="number-pad"
+                      onChangeText={val => this.onChangeText('surfaceMin', val)}
+                      iconContent={
+                        <Text>m²</Text>
+                      }
+                    />
+                  </Block>
+                  <Text>à</Text>
+                  <Block width={width * 0.4}>
+                    <Input
+                      right
+                      placeholder="Surface min"
+                      style={styles.inputs}
+                      type="number-pad"
+                      onChangeText={val => this.onChangeText('surfaceMax', val)}
+                      iconContent={
+                        <Text>m²</Text>
+                      }
+                    />
+                  </Block>
+                </Block>
               </Block>
-              <Block style={{
-                width: '100%',
-                borderTopColor: 'grey',
-                borderTopWidth: 1,
-              }}>
-                <Text>Nombre de chambres</Text>
+              <Block style={styles.lined}>
+                <Text style={styles.titleFilter}>Nombre de chambres</Text>
               </Block>
-              <Block style={{
-                width: '100%',
-                borderTopColor: 'grey',
-                borderTopWidth: 1,
-              }}>
-                <Text>Nombre de pièces</Text>
+              <Block style={styles.lined}>
+                <Text style={styles.titleFilter}>Nombre de pièces</Text>
               </Block>
-              <Block style={{
-                width: '100%',
-                borderTopColor: 'grey',
-                borderTopWidth: 1,
-              }}>
-                <Text>Surface terrain</Text>
+              <Block style={styles.lined}>
+                <Text style={styles.titleFilter}>Surface terrain</Text>
               </Block>
             </Block>
-            <Pressable
-                onPress={() => this.setModalVisible(!modalVisible)}
+          </Block>
+          <Block flex={0.1} center>
+            <Button color="primary" round style={styles.createButton} onPress={() => this.setState({ modalFilterVisible: !modalFilterVisible })}>
+              <Text
+                style={{ fontFamily: 'montserrat-bold' }}
+                size={14}
+                color={nowTheme.COLORS.WHITE}
               >
-                <Text>Hide Modal</Text>
-              </Pressable>
+                Valider
+              </Text>
+            </Button>
           </Block>
         </Modal>
         <Button
         shadowless
         style={styles.tab}
-        onPress={() => this.setModalVisible(true)}>
+        onPress={() => this.setState({ modalFilterVisible: !modalFilterVisible })}>
           <Block row middle>
             <Icon
               size={18}
@@ -288,6 +361,26 @@ class Header extends React.Component {
 }
 
 const styles = StyleSheet.create({
+  titleFilter: {
+    fontFamily: 'montserrat-regular',
+    fontSize: 20,
+  },
+  inputs: {
+    borderWidth: 1,
+    borderColor: '#E3E3E3',
+    borderRadius: 21.5
+  },
+  name: {
+    flexWrap: 'wrap',
+    alignItems: 'flex-start',
+    flexDirection:'row',
+  },
+  lined: {
+    margin: 5,
+    width: '100%',
+    borderTopColor: 'grey',
+    borderTopWidth: 1,
+  },
   button: {
     padding: 12,
     position: 'relative'
@@ -296,7 +389,7 @@ const styles = StyleSheet.create({
     margin: 20,
     backgroundColor: "white",
     borderRadius: 20,
-    padding: 35,
+    padding: 10,
     alignItems: "center",
     shadowColor: "#000",
     shadowOffset: {

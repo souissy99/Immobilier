@@ -1,5 +1,6 @@
 import React from 'react';
 import { StyleSheet, Dimensions, ScrollView, Image } from "react-native";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Block, Text, theme, Button, Button as GaButton } from "galio-framework";
 import Carousel, { ParallaxImage } from 'react-native-snap-carousel';
 
@@ -112,7 +113,7 @@ class Details extends React.Component {
             style={styles.title}
             color={nowTheme.COLORS.SECONDARY}
           >
-            Titre
+            {item.title}
           </Text>
         </Block>
         <Block flex left>
@@ -122,7 +123,7 @@ class Details extends React.Component {
             color={nowTheme.COLORS.HEADER}
             bold
           >
-            380 000$
+            {item.price} €
           </Text>
         </Block>
         </ScrollView>

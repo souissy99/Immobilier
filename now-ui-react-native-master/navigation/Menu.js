@@ -23,6 +23,7 @@ function CustomDrawerContent({
   const insets = useSafeArea();
   const screens = [
     "Acceuil",
+    "Profile"
   ];
   return (
     <Block
