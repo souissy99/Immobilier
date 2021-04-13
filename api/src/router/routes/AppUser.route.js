@@ -19,6 +19,7 @@ module.exports = (router) => {
 					res.status(200).json({
 						message: 'connected',
 						data: {
+							id : user.id,
 							firstName: user.firstname,
 							lastname: user.lastname,
 							adresse: user.adresse,
@@ -39,6 +40,7 @@ module.exports = (router) => {
 				res.status(200).json({
 					message: `Le user "${user.firstname}" a bien été crée.`,
 					data: {
+						id : user.id,
 						firstName: user.firstname,
 						lastname: user.lastname,
 						adresse: user.adresse,
