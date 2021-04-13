@@ -4,7 +4,7 @@ const { ValidationError, UniqueConstraintError } = require('sequelize');
 
 module.exports = (router) => {
 	router.route('/infos')
-		// .all(auth)
+		.all(auth)
 		.get(async (req, res) => {
 			// #swagger.tags = ['users']
 			try {
@@ -30,7 +30,7 @@ module.exports = (router) => {
 
 	/** ITEMS OPPERATION */
 	router.route('/infos/user/:id')
-		// .all(auth)
+		.all(auth)
 		.get(async (req, res) => {
 			// #swagger.tags = ['users']
 			try {
