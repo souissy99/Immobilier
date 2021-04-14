@@ -3,7 +3,7 @@ import { withNavigation } from '@react-navigation/compat';
 import { StyleSheet,Dimensions, TouchableWithoutFeedback, View, Modal, Keyboard } from 'react-native';
 import { Block, Text, theme, Button } from 'galio-framework';
 
-import { nowTheme } from '../constants/';
+import { nowTheme, api } from '../constants/';
 import { Input, Icon } from '../components';
 
 
@@ -13,11 +13,35 @@ const DismissKeyboard = ({ children }) => (
   <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>{children}</TouchableWithoutFeedback>
 );
 
+const getData = async (key) => {
+  try {
+    const jsonValue = await AsyncStorage.getItem(key)
+    return jsonValue != null ? JSON.parse(jsonValue) : null;
+  } catch(e) {
+    // error reading value
+  }
+}
+
+const getAllKeys = async () => {
+  let keys = []
+  try {
+    keys = await AsyncStorage.getAllKeys()
+  } catch(e) {
+    // read key error
+  }
+
+  console.log(keys)
+  // example console.log result:
+  // ['@MyApp_user', '@MyApp_key']
+}
+
+
 class CalculatorForm extends React.Component {
 
   constructor(props) {
     super(props);
     this.state = {
+      isLoading: false,
       modalRevenusVisible: false,
       modalChargesVisible: false,
       options: [
@@ -39,8 +63,6 @@ class CalculatorForm extends React.Component {
         primesCoemp: 0,
         totalCharges: 0,
         totalRevenus: 0,
-      },
-      chargesData: {
         pension: 0,
         loyer: 0,
         pretLocatif: 0,
@@ -48,8 +70,6 @@ class CalculatorForm extends React.Component {
         creditConso: 0,
         creditAuto: 0,
         autreCredit: 0,
-      },
-      revenusData: {
         revenusFin: 0,
         alloc: 0,
         revenusLoc: 0,
@@ -68,7 +88,58 @@ class CalculatorForm extends React.Component {
  }
 
  calculRedirect = () => {
-  return this.props.navigation.navigate('App');
+
+  this.setState({isLoading: true})
+  const { formData } = this.state
+
+  // if(!formData.revenusEmp && !formData.renderCoemp) {
+  //   console.log('remplir au moins un revenus')
+  //   this.setState({isLoading: false})
+  // }
+  fetch(api.url + 'simulations', {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      UserId: this.props.userId,
+      alloc: formData.alloc,
+      autreCredit: formData.autreCredit,
+      creditAuto: formData.creditAuto,
+      creditConso: formData.creditConso,
+      loyer: formData.loyer,
+      pension: formData.pension,
+      pretImmo: formData.pretImmo,
+      pretLocatif: formData.pretLocatif,
+      primesCoemp: formData.primesCoemp,
+      primesEmp: formData.primesEmp,
+      revenusCoemp: formData.revenusCoemp,
+      revenusEmp: formData.revenusEmp,
+      revenusFin: formData.revenusFin,
+      revenusLoc: formData.revenusLoc,
+      totalCharges: formData.totalCharges,
+      totalRevenus: formData.totalRevenus,
+    })
+  })
+  .then(response => {
+    const statusCode = response.status;
+    const data = response.json();
+    return Promise.all([statusCode, data]);
+  }).then(([res, data]) => {
+    if(res == 200) {
+      this.setState({isLoading: false})
+      console.log(data)
+      return this.props.navigation.navigate('App');
+    } else {
+      this.setState({isLoading: false})
+      console.log(data)
+    }
+  })
+  .catch((error) => {
+    this.setState({isLoading: false})
+    console.error(error);
+  })
+  
  }
 
   renderSingleForm = () => {
@@ -245,7 +316,7 @@ class CalculatorForm extends React.Component {
                       placeholder="0"
                       style={styles.inputs}
                       type="number-pad"
-                      onChangeText={val => this.onChangeText('chargesData.pension', val)}
+                      onChangeText={val => this.onChangeText('formData.pension', val)}
                       iconContent={
                         <Text>€ / mois</Text>
                       }
@@ -258,7 +329,7 @@ class CalculatorForm extends React.Component {
                       placeholder="0"
                       style={styles.inputs}
                       type="number-pad"
-                      onChangeText={val => this.onChangeText('chargesData.loyer', val)}
+                      onChangeText={val => this.onChangeText('formData.loyer', val)}
                       iconContent={
                         <Text>€ / mois</Text>
                       }
@@ -273,7 +344,7 @@ class CalculatorForm extends React.Component {
                       placeholder="0"
                       style={styles.inputs}
                       type="number-pad"
-                      onChangeText={val => this.onChangeText('chargesData.pretLocatif', val)}
+                      onChangeText={val => this.onChangeText('formData.pretLocatif', val)}
                       iconContent={
                         <Text>€ / mois</Text>
                       }
@@ -286,7 +357,7 @@ class CalculatorForm extends React.Component {
                       placeholder="0"
                       style={styles.inputs}
                       type="number-pad"
-                      onChangeText={val => this.onChangeText('chargesData.pretImmo', val)}
+                      onChangeText={val => this.onChangeText('formData.pretImmo', val)}
                       iconContent={
                         <Text>€ / mois</Text>
                       }
@@ -301,7 +372,7 @@ class CalculatorForm extends React.Component {
                       placeholder="0"
                       style={styles.inputs}
                       type="number-pad"
-                      onChangeText={val => this.onChangeText('chargesData.creditConso', val)}
+                      onChangeText={val => this.onChangeText('formData.creditConso', val)}
                       iconContent={
                         <Text>€ / mois</Text>
                       }
@@ -314,7 +385,7 @@ class CalculatorForm extends React.Component {
                       placeholder="0"
                       style={styles.inputs}
                       type="number-pad"
-                      onChangeText={val => this.onChangeText('chargesData.creditAuto', val)}
+                      onChangeText={val => this.onChangeText('formData.creditAuto', val)}
                       iconContent={
                         <Text>€ / mois</Text>
                       }
@@ -328,7 +399,7 @@ class CalculatorForm extends React.Component {
                     placeholder="0"
                     style={styles.inputs}
                     type="number-pad"
-                    onChangeText={val => this.onChangeText('chargesData.autreCredit', val)}
+                    onChangeText={val => this.onChangeText('formData.autreCredit', val)}
                     iconContent={
                       <Text>€ / mois</Text>
                     }
@@ -398,7 +469,7 @@ class CalculatorForm extends React.Component {
                     placeholder="0"
                     style={styles.inputs}
                     type="number-pad"
-                    onChangeText={val => this.onChangeText('revenusData.revenusFin', val)}
+                    onChangeText={val => this.onChangeText('formData.revenusFin', val)}
                     iconContent={
                       <Text>€ / mois</Text>
                     }
@@ -411,7 +482,7 @@ class CalculatorForm extends React.Component {
                     placeholder="0"
                     style={styles.inputs}
                     type="number-pad"
-                    onChangeText={val => this.onChangeText('revenusData.alloc', val)}
+                    onChangeText={val => this.onChangeText('formData.alloc', val)}
                     iconContent={
                       <Text>€ / mois</Text>
                     }
@@ -424,7 +495,7 @@ class CalculatorForm extends React.Component {
                     placeholder="0"
                     style={styles.inputs}
                     type="number-pad"
-                    onChangeText={val => this.onChangeText('revenusData.revenusLoc', val)}
+                    onChangeText={val => this.onChangeText('formData.revenusLoc', val)}
                     iconContent={
                       <Text>€ / mois</Text>
                     }
@@ -437,7 +508,7 @@ class CalculatorForm extends React.Component {
                     placeholder="0"
                     style={styles.inputs}
                     type="number-pad"
-                    onChangeText={val => this.onChangeText('revenusData.pension', val)}
+                    onChangeText={val => this.onChangeText('formData.pension', val)}
                     iconContent={
                       <Text>€ / mois</Text>
                     }
@@ -464,6 +535,8 @@ class CalculatorForm extends React.Component {
   };
 
   render() {
+    const { isLoading } = this.state;
+
     return (
       <Block flex space="evenly">
         <Block flex={0.1} middle style={styles.socialConnect}>
@@ -500,7 +573,7 @@ class CalculatorForm extends React.Component {
                   {this.renderRevenus()}
               </Block>
               <Block center>
-                <Button color="primary" round style={styles.createButton} onPress={() => this.calculRedirect()}>
+                <Button color="primary" round style={styles.createButton} onPress={() => this.calculRedirect()} loading={isLoading}>
                   <Text
                     style={{ fontFamily: 'montserrat-bold' }}
                     size={14}

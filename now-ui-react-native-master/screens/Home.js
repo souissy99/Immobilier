@@ -32,12 +32,13 @@ class Home extends React.Component {
   state = {
     isLoading: false,
     offset: 1,
+    simulation: {},
     ads: [],
   };
 
   getAds = (offset, limit) => {
     this.setState({isLoading: true})
-    fetch(api.url + 'immobiliers?page=' + offset + '&limit=' + limit, {
+    fetch(api.url + 'immobiliers?page=' + offset + '&limit=' + limit + '&price[min]=' + this.state.simulation.result * 0.90 + '&price[max]=' + this.state.simulation.result * 1.1, {
       method: 'GET',
       headers: {
           'Content-Type': 'application/json',
@@ -57,15 +58,15 @@ class Home extends React.Component {
   }
 
   async componentDidMount() {
-    this.getAds(this.state.offset, 15)
-    const test = await getData('@user') 
-    console.log(test)
+    const simulation = await getData('@simulation') 
+    this.setState({simulation: simulation.data[0]})
+    this.getAds(this.state.offset, 15, this.state.simulation.price)
   }
 
   loadMore = () => {
     const newOffset = this.state.offset + 1;
     this.setState({offset: newOffset})
-    this.getAds(this.state.offset, 15)
+    this.getAds(this.state.offset, 15, this.state.simulation.price)
   }
 
   renderArticles = () => {

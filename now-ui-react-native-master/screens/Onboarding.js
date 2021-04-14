@@ -40,6 +40,34 @@ export default class Onboarding extends React.Component {
   onChangeText = (key, val) => {
     this.setState({ [key]: val })
   }
+
+  getSimulation = (id) => {
+    fetch(api.url + 'simulations/user/' + id, {
+      method: 'GET',
+      headers: {
+          'Content-Type': 'application/json',
+      },
+    })
+    .then(response => {
+      const statusCode = response.status;
+      const data = response.json();
+      return Promise.all([statusCode, data]);
+    }).then(([res, data]) => {
+      if(res == 200) {
+        storeData('@simulation', data)
+        console.log(data)
+        this.setState({isLoading: false})
+        return this.props.navigation.navigate('App');
+      } else {
+        this.setState({isLoading: false})
+        console.log(res)
+      }
+    })
+    .catch((error) => {
+      this.setState({isLoading: false})
+      console.error(error);
+    })
+  }
   
   loginRedirect = () => {
     this.setState({loginView: !this.state.loginView})
@@ -62,7 +90,7 @@ export default class Onboarding extends React.Component {
             body: JSON.stringify({
                 firstname: firstName,
                 lastname: lastName,
-                address: address,
+                adresse: address,
                 email: email,
                 password: password,
             })
@@ -74,8 +102,14 @@ export default class Onboarding extends React.Component {
         }).then(([res, data]) => {
           if(res == 200) {
             storeData('@user', data)
+            this.setState({
+              isLoading: false,
+              userId: data.data.id,
+              calculatorView: !this.state.calculatorView
+            })
+          } else {
+            console.log(res, data)
             this.setState({isLoading: false})
-            this.setState({calculatorView: !this.state.calculatorView})
           }
         })
         .catch((error) => {
@@ -111,8 +145,10 @@ export default class Onboarding extends React.Component {
         }).then(([res, data]) => {
           if(res == 200) {
             storeData('@user', data)
+            this.getSimulation(data.data.id)
+          } else {
             this.setState({isLoading: false})
-            return this.props.navigation.navigate('App');
+            console.log(res)
           }
         })
         .catch((error) => {
@@ -382,7 +418,7 @@ export default class Onboarding extends React.Component {
 
   renderCalculatorForm = () => {
     return(
-      <CalculatorForm />
+      <CalculatorForm userId={this.state.userId}/>
     )
   };
   
