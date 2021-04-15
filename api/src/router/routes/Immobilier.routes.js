@@ -14,6 +14,7 @@ module.exports = (router) => {
         const where = {};
 
         if (params.id_site_source) where.id_site_source = params.id_site_source;
+        if(params.category && params.category !== 'all') where.category = params.category;
         if (params.code_postal) where.code_postal = { [Op.eq]: params.code_postal };
         if (params.rooms) {
           const err = Tools.rangeFilter(where, 'rooms', params.rooms)
