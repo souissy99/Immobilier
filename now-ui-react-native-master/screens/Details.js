@@ -15,23 +15,24 @@ class Details extends React.Component {
     super(props);
     this.state = {
       activeIndex:0,
-      carouselItems: [
-      {
-          image: "https://static.pap.fr/photos/D29/D29A0749.jpg",
-      },
-      {
-          image: "https://static.pap.fr/photos/D29/D29B0749.jpg",
-      },
-      {
-          image: "https://static.pap.fr/photos/D29/D29C0749.jpg",
-      },
-      {
-          image: "https://static.pap.fr/photos/D29/D29D0749.jpg",
-      },
-    ]
   }
 }
-
+  renderHeader = () => {
+    return (
+      <Block style={styles.headerStyles}>
+        <Block left center style={styles.header}>
+          <Block style={styles.backIcon}>
+            <Icon
+            name="arrowleft"
+            family="antdesign"
+            size={30}
+            color="grey"
+            /> 
+          </Block>
+        </Block>
+      </Block>
+    );
+  };
   renderFooter = () => {
     return (
       <Block style={styles.footerStyles}>
@@ -74,15 +75,14 @@ class Details extends React.Component {
     );
   };
 
-  _renderItem({item,index}, parallaxProps){
+  _renderItem({item, index}){
     return (
       <Block style={styles.imgContainer}>
-        <ParallaxImage
-          source={require('../assets/imgs/project21.jpg')}
+        <Image
+          source={{ uri: item }}
           containerStyle={styles.imgStyle}
           style={styles.image}
           parallaxFactor={0.4}
-          {...parallaxProps}
         />
       </Block>
     )
@@ -90,18 +90,24 @@ class Details extends React.Component {
 
   render() {
     const item = this.props.route.params.data;
+
     return (
     <Block flex center style={styles.home}>
+      {this.renderHeader()}
         <ScrollView
             showsVerticalScrollIndicator={false}
             contentContainerStyle={styles.articles}
         >
+        <Block flex left>
+        <Text>{item.city}</Text>
+        <Text>Code postal: {item.code_postal}</Text>
+        </Block>
         <Block flex center>
           <Carousel
             sliderWidth={width}
             sliderHeight={width}
             itemWidth={width - 60}
-            data={this.state.carouselItems}
+            data={item.medias.images}
             renderItem={this._renderItem}
             hasParallaxImages={true}
           />
@@ -126,6 +132,13 @@ class Details extends React.Component {
             {item.price} €
           </Text>
         </Block>
+        <Block flex left style={{marginBottom: 5}}>
+          <Text>Pièce(s): {item.rooms}</Text>
+          <Text>Chambre(s): {item.bedrooms}</Text>
+          <Text>Pièce(s): {item.rooms}</Text>
+          <Text>Surface: {item.surface}²</Text>
+          <Text>Description: {item.description}</Text>
+        </Block>
         </ScrollView>
         {this.renderFooter()}
     </Block>
@@ -137,15 +150,25 @@ const styles = StyleSheet.create({
   home: {
     width: width
   },
-  imageContainer: {
-    width: width - 60,
-    height: width - 60,
+  backIcon: {
+    marginLeft: 10
   },
   imgStyle: {
     flex: 1,
     marginBottom: Platform.select({ ios: 0, android: 1 }), // Prevent a random Android rendering issue
     backgroundColor: 'white',
     borderRadius: 8,
+  },
+  item: {
+    width: width - 60,
+    height: width - 60,
+  },
+  imgContainer: {
+    width: width,
+    height: height / 3,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'dodgerblue'
   },
   image: {
     ...StyleSheet.absoluteFillObject,
@@ -167,9 +190,22 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     elevation: 3
   },
+  headerStyles: {
+    backgroundColor: theme.COLORS.TRANSPARENT,
+    shadowColor: 'black',
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 6,
+    shadowOpacity: 0.2,
+    elevation: 3,
+  },
   footer: {
     width: width,
     height: height / 10,
+    zIndex: 5
+  },
+  header: {
+    width: width,
+    height: height / 15,
     zIndex: 5
   },
   articles: {

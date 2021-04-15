@@ -2,10 +2,11 @@ import React from 'react';
 import { withNavigation } from '@react-navigation/compat';
 import { TouchableOpacity, StyleSheet, Platform, Dimensions, Modal,TouchableWithoutFeedback, View } from 'react-native';
 import { Button, Block, NavBar, Text, theme, Button as GaButton, Checkbox } from 'galio-framework';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import Icon from './Icon';
 import Tabs from './Tabs';
-import { Input } from '../components';
+import { Input, CustomSlider } from '../components';
 import nowTheme from '../constants/Theme';
 
 const { height, width } = Dimensions.get('window');
@@ -37,6 +38,16 @@ const BasketButton = ({ isWhite, style, navigation }) => (
   </TouchableOpacity>
 );
 
+const storeData = async (key, value) => {
+  try {
+    const jsonValue = JSON.stringify(value)
+    await AsyncStorage.setItem(key, jsonValue)
+    console.log('stored')
+  } catch (e) {
+    console.log(e)
+  }
+}
+
 class Header extends React.Component {
   state = {
     modalFilterVisible: false,
@@ -45,16 +56,18 @@ class Header extends React.Component {
       {
           id: 1,
           title: 'Maison',
-          checked: false
+          checked: true
       },
       {
           id: 2,
           title: 'Appartement',
-          checked: false
+          checked: true
       }
     ],
     surfaceMin: 0,
     surfaceMax: 0,
+    nombreChambres: [],
+    nombrePieces: []
   };
 
   checkThisBox = (itemId, checked) => {
@@ -139,6 +152,7 @@ class Header extends React.Component {
   renderCheckbox = (id, label, checked) => {
     return (
       <TouchableWithoutFeedback
+        key={id}
         onPress={() => {
           this.checkThisBox(id, checked);
         }}
@@ -162,16 +176,43 @@ class Header extends React.Component {
     )
   };
 
+  bedroomsValue = (values) => {
+    this.setState({nombreChambres : values})
+  }
+
+  roomsValue = (values) => {
+    this.setState({nombrePieces : values})
+  }
+
+  filterValidation = () => {
+    const filter = {
+      maison: this.state.type[0].checked,
+      appartement: this.state.type[1].checked,
+      surfaceMin: this.state.surfaceMin,
+      surfaceMax: this.state.surfaceMax,
+      nombreChambres: this.state.nombreChambres,
+      nombrePieces: this.state.nombrePieces,
+    };
+
+    storeData('@filter', filter);
+    this.setState({ modalFilterVisible: !this.state.modalFilterVisible })
+    return this.props.navigation.push('App');
+  }
+
+  sortValidation = () => {
+    this.setState({ modalSortVisible: !this.state.modalSortVisible })
+  }
+
   renderOptions = () => {
     const { navigation, optionLeft, optionRight } = this.props;
-    const { modalFilterVisible } = this.state;
+    const { modalFilterVisible, modalSortVisible } = this.state;
 
     return (
       <Block row style={styles.options}>
         <Button
           shadowless
           style={[styles.tab, styles.divider]}
-          onPress={() => this.setModalVisible(true)}
+          onPress={() => this.setState({ modalSortVisible: !modalSortVisible })}
         >
           <Block row middle>
             <Icon
@@ -189,6 +230,31 @@ class Header extends React.Component {
         <Modal
           animationType="slide"
           transparent={true}
+          visible={modalSortVisible}
+          onRequestClose={() => {
+            this.setState({ modalSortVisible: !modalSortVisible })
+          }}
+        >
+          <Block flex center>
+            <Block style={styles.modalView}>
+              <Text>GFG</Text>
+            </Block>
+          </Block>
+          <Block flex={0.1} center>
+            <Button color="primary" round style={styles.createButton} onPress={this.sortValidation}>
+              <Text
+                style={{ fontFamily: 'montserrat-bold' }}
+                size={14}
+                color={nowTheme.COLORS.WHITE}
+              >
+                Valider
+              </Text>
+            </Button>
+          </Block>
+        </Modal>
+        <Modal
+          animationType="slide"
+          transparent={true}
           visible={modalFilterVisible}
           onRequestClose={() => {
             this.setState({ modalFilterVisible: !modalFilterVisible })
@@ -200,7 +266,7 @@ class Header extends React.Component {
                 <Text style={styles.titleFilter}>Type de bien</Text>
                   <Block>
                     {this.state.type.map((opt) => (
-                      <Block width={width * 0.4} style={{ marginBottom: 5, marginRight: 2 }}>
+                      <Block key={opt.id} width={width * 0.4} style={{ marginBottom: 5, marginRight: 2 }}>
                         {this.renderCheckbox(opt.id, opt.title, opt.checked)}
                       </Block>
                       )
@@ -239,17 +305,31 @@ class Header extends React.Component {
               </Block>
               <Block style={styles.lined}>
                 <Text style={styles.titleFilter}>Nombre de chambres</Text>
+                <CustomSlider
+                    min={1}
+                    max={5}
+                    LRpadding={40}
+                    callback={this.bedroomsValue}
+                    single={false}
+                  />
               </Block>
               <Block style={styles.lined}>
                 <Text style={styles.titleFilter}>Nombre de pièces</Text>
+                <CustomSlider
+                    min={1}
+                    max={5}
+                    LRpadding={40}
+                    callback={this.roomsValue}
+                    single={false}
+                  />
               </Block>
-              <Block style={styles.lined}>
+              {/* <Block style={styles.lined}>
                 <Text style={styles.titleFilter}>Surface terrain</Text>
-              </Block>
+              </Block> */}
             </Block>
           </Block>
           <Block flex={0.1} center>
-            <Button color="primary" round style={styles.createButton} onPress={() => this.setState({ modalFilterVisible: !modalFilterVisible })}>
+            <Button color="primary" round style={styles.createButton} onPress={this.filterValidation}>
               <Text
                 style={{ fontFamily: 'montserrat-bold' }}
                 size={14}

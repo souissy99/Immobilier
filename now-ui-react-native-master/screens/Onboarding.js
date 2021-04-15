@@ -4,7 +4,7 @@ import { Block, Button, Text, Checkbox, theme, Button as GaButton } from 'galio-
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { Images, nowTheme, api } from '../constants/';
-import { Input, Icon,CalculatorForm } from '../components';
+import { Input, Icon, CalculatorForm } from '../components';
 import { isLoading } from 'expo-font';
 
 const DismissKeyboard = ({ children }) => (

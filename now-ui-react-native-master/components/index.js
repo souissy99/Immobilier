@@ -7,5 +7,6 @@ import Header from './Header';
 import Input from './Input';
 import Switch from './Switch';
 import Select from './Select';
+import CustomSlider from './CustomSlider';
 
-export { Button, Card, DrawerItem, Icon, Input, Header, Switch, Select, CalculatorForm };
+export { Button, Card, DrawerItem, Icon, Input, Header, Switch, Select, CalculatorForm, CustomSlider };

@@ -59,6 +59,10 @@ class Home extends React.Component {
 
   async componentDidMount() {
     const simulation = await getData('@simulation') 
+    const filter = await getData('@filter')
+
+    console.log(filter)
+
     this.setState({simulation: simulation.data[0]})
     this.getAds(this.state.offset, 15, this.state.simulation.price)
   }
@@ -78,7 +82,7 @@ class Home extends React.Component {
       >
         <Block flex>
           {this.state.ads.map((ads) => (
-            <Card item={ads} full />
+            <Card item={ads} key={ads.id} full />
             )
           )}
         </Block>
