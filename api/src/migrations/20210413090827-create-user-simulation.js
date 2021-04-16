@@ -59,6 +59,10 @@ module.exports = {
 			result: {
 				type: Sequelize.FLOAT
 			},
+			UserId: {
+				allowNull: false,
+				type: Sequelize.INTEGER	
+			},
 			createdAt: {
 				allowNull: false,
 				type: Sequelize.DATE
