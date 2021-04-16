@@ -81,6 +81,11 @@ module.exports = (sequelize, DataTypes) => {
 		result: {
 			type: DataTypes.FLOAT,
 			allowNull: false
+		},
+		UserId: {
+			required: true,
+			allowNull: false,
+			type: DataTypes.INTEGER	
 		}
 	}, {
 		sequelize,
