@@ -12,6 +12,16 @@ import { DrawerItem as DrawerCustomItem, Icon } from "../components";
 
 const { width } = Dimensions.get("screen");
 
+const clearAll = async () => {
+  try {
+    await AsyncStorage.clear()
+  } catch(e) {
+    // clear error
+  }
+
+  console.log('Done.')
+}
+
 function CustomDrawerContent({
   drawerPosition,
   navigation,
@@ -58,7 +68,7 @@ function CustomDrawerContent({
             style={{ borderColor: 'white', width: '93%', borderWidth: StyleSheet.hairlineWidth, marginHorizontal: 10}}
           />
         </Block>
-        <DrawerCustomItem title="DECONNEXION" navigation={navigation}/>
+        <DrawerCustomItem title="DECONNEXION" onPress={() => {console.log('tes')}} navigation={navigation}/>
         </ScrollView>
       </Block>
     </Block>

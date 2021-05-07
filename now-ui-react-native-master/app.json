@@ -21,6 +21,16 @@
     "assetBundlePatterns": [
       "**/*"
     ],
+    "web": {
+      "build": {
+        "babel": {
+          "include": [
+            "galio-framework",
+            "@ptomasroos/react-native-multi-slider"
+          ]
+        }
+      }
+    },
     "ios": {
       "supportsTablet": true
     },

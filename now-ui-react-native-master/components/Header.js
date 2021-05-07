@@ -1,6 +1,6 @@
 import React from 'react';
 import { withNavigation } from '@react-navigation/compat';
-import { TouchableOpacity, StyleSheet, Platform, Dimensions, Modal,TouchableWithoutFeedback, View } from 'react-native';
+import { TouchableOpacity, StyleSheet, Platform, Dimensions, Modal, TouchableWithoutFeedback, Keyboard, View } from 'react-native';
 import { Button, Block, NavBar, Text, theme, Button as GaButton, Checkbox } from 'galio-framework';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -12,6 +12,10 @@ import nowTheme from '../constants/Theme';
 const { height, width } = Dimensions.get('window');
 const iPhoneX = () =>
   Platform.OS === 'ios' && (height === 812 || width === 812 || height === 896 || width === 896);
+
+const DismissKeyboard = ({ children }) => (
+  <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>{children}</TouchableWithoutFeedback>
+);
 
 const BellButton = ({ isWhite, style, navigation }) => (
   <TouchableOpacity
@@ -177,14 +181,22 @@ class Header extends React.Component {
   };
 
   bedroomsValue = (values) => {
+    if (values[1] == 5) values.pop()
     this.setState({nombreChambres : values})
   }
 
   roomsValue = (values) => {
+    if (values[1] == 5) values.pop()
     this.setState({nombrePieces : values})
   }
 
   filterValidation = () => {
+    if (this.state.surfaceMax != 0) {
+      if (Number(this.state.surfaceMin) > Number(this.state.surfaceMax)) {
+        console.log("Min ne peut etre sup a max")
+        return
+      }
+    }
     const filter = {
       maison: this.state.type[0].checked,
       appartement: this.state.type[1].checked,
@@ -201,6 +213,7 @@ class Header extends React.Component {
 
   sortValidation = () => {
     this.setState({ modalSortVisible: !this.state.modalSortVisible })
+    return this.props.navigation.push('App');
   }
 
   renderOptions = () => {
@@ -260,6 +273,7 @@ class Header extends React.Component {
             this.setState({ modalFilterVisible: !modalFilterVisible })
           }}
         >
+          <DismissKeyboard>
           <Block flex center>
             <Block style={styles.modalView}>
               <Block style={styles.lined}>
@@ -279,7 +293,7 @@ class Header extends React.Component {
                 <Block width={width * 0.4}>
                   <Input
                       right
-                      placeholder="Surface max"
+                      placeholder="Surface min"
                       style={styles.inputs}
                       type="number-pad"
                       onChangeText={val => this.onChangeText('surfaceMin', val)}
@@ -292,7 +306,7 @@ class Header extends React.Component {
                   <Block width={width * 0.4}>
                     <Input
                       right
-                      placeholder="Surface min"
+                      placeholder="Surface max"
                       style={styles.inputs}
                       type="number-pad"
                       onChangeText={val => this.onChangeText('surfaceMax', val)}
@@ -328,6 +342,7 @@ class Header extends React.Component {
               </Block> */}
             </Block>
           </Block>
+          </DismissKeyboard>
           <Block flex={0.1} center>
             <Button color="primary" round style={styles.createButton} onPress={this.filterValidation}>
               <Text

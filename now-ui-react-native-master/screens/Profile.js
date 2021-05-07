@@ -1,6 +1,7 @@
 import React from 'react';
-import { StyleSheet, Dimensions, ScrollView, Image, ImageBackground, Platform } from 'react-native';
-import { Block, Text, theme, Button as GaButton } from 'galio-framework';
+import { StyleSheet, Dimensions, ScrollView, Image, ImageBackground, Platform, TouchableHighlight } from 'react-native';
+import { Block, Text, theme, Button as GaButton, Card } from 'galio-framework';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { Button } from '../components';
 import { Images, nowTheme } from '../constants';
@@ -10,209 +11,165 @@ const { width, height } = Dimensions.get('screen');
 
 const thumbMeasure = (width - 48 - 32) / 3;
 
-const Profile = () => {
-  return (
-    <Block style={{
-      flex: 1,
-      flexDirection: 'column',
-      justifyContent: 'space-between',
-    }} >
-      <Block flex={0.6} >
-        <ImageBackground
-          source={Images.ProfileBackground}
-          style={styles.profileContainer}
-          imageStyle={styles.profileBackground}
-        >
-          <Block flex style={styles.profileCard}>
-            <Block style={{ position: 'absolute', width: width, zIndex: 5, paddingHorizontal: 20 }}>
-              <Block middle style={{ top: height * 0.15 }}>
-                <Image source={Images.ProfilePicture} style={styles.avatar} />
-              </Block>
-              <Block style={{ top: height * 0.2 }}>
-                <Block middle >
-                  <Text
-                    style={{
-                      fontFamily: 'montserrat-bold',
-                      marginBottom: theme.SIZES.BASE / 2,
-                      fontWeight: '900',
-                      fontSize: 26
-                    }}
-                    color='#ffffff'
-                    >
-                    Ryan Scheinder
-                  </Text>
-
-                  <Text
-                    size={16}
-                    color="white"
-                    style={{
-                      marginTop: 5,
-                      fontFamily: 'montserrat-bold',
-                      lineHeight: 20,
-                      fontWeight: 'bold',
-                      fontSize: 18,
-                      opacity: .8
-                    }}
-                  >
-                    Photographer
-                  </Text>
-                </Block>
-                <Block style={styles.info}>
-                  <Block row space="around">
-
-                    <Block middle>
-                      <Text
-                        size={18}
-                        color="white"
-                        style={{ marginBottom: 4, fontFamily: 'montserrat-bold' }}
-                      >
-                        2K
-                      </Text>
-                      <Text style={{ fontFamily: 'montserrat-regular' }} size={14} color="white">
-                        Friends
-                      </Text>
-                    </Block>
-
-                    <Block middle>
-                      <Text
-                        color="white"
-                        size={18}
-                        style={{ marginBottom: 4, fontFamily: 'montserrat-bold' }}
-                      >
-                        26
-                      </Text>
-                      <Text style={{ fontFamily: 'montserrat-regular' }} size={14} color="white">
-                        Comments
-                        </Text>
-                    </Block>
-
-                    <Block middle>
-                      <Text
-                        color="white"
-                        size={18}
-                        style={{ marginBottom: 4, fontFamily: 'montserrat-bold' }}
-                      >
-                        48
-                      </Text>
-                      <Text style={{ fontFamily: 'montserrat-regular' }} size={14} color="white">
-                        Bookmarks
-                      </Text>
-                    </Block>
-
-                  </Block>
-                </Block>
-              </Block>
-
-            </Block>
-
-
-            <Block
-              middle
-              row
-              style={{ position: 'absolute', width: width, top: height * 0.6 - 26, zIndex: 99 }}
-            >
-              <Button style={{ width: 114, height: 44, marginHorizontal: 5, elevation: 0 }} textStyle={{ fontSize: 16 }} round>
-                Follow
-              </Button>
-              <GaButton
-                round
-                onlyIcon
-                shadowless
-                icon="twitter"
-                iconFamily="Font-Awesome"
-                iconColor={nowTheme.COLORS.WHITE}
-                iconSize={nowTheme.SIZES.BASE * 1.375}
-                color={'#888888'}
-                style={[styles.social, styles.shadow]}
-              />
-              <GaButton
-                round
-                onlyIcon
-                shadowless
-                icon="pinterest"
-                iconFamily="Font-Awesome"
-                iconColor={nowTheme.COLORS.WHITE}
-                iconSize={nowTheme.SIZES.BASE * 1.375}
-                color={'#888888'}
-                style={[styles.social, styles.shadow]}
-              />
-            </Block>
-          </Block>
-        </ImageBackground>
-
-
-      </Block>
-      <Block />
-      <Block flex={0.4} style={{ padding: theme.SIZES.BASE, marginTop: 90}}>
-        <ScrollView showsVerticalScrollIndicator={false}>
-          <Block flex style={{ marginTop: 20 }}>
-            <Block middle>
-              <Text
-                style={{
-                  color: '#2c2c2c',
-                  fontWeight: 'bold',
-                  fontSize: 19,
-                  fontFamily: 'montserrat-bold',
-                  marginTop: 15,
-                  marginBottom: 30,
-                  zIndex: 2
-                }}
-              >
-                About me
-                  </Text>
-              <Text
-                size={16}
-                muted
-                style={{
-                  textAlign: 'center',
-                  fontFamily: 'montserrat-regular',
-                  zIndex: 2,
-                  lineHeight: 25,
-                  color: '#9A9A9A',
-                  paddingHorizontal: 15
-                }}
-              >
-                An artist of considerable range, named Ryan — the name has taken by Melbourne has raised,
-                Brooklyn-based Nick Murphy — writes, performs and records all of his own music.
-                  </Text>
-            </Block>
-            <Block row style={{ paddingVertical: 14, paddingHorizontal: 15 }} space="between">
-              <Text bold size={16} color="#2c2c2c" style={{ marginTop: 3 }}>
-                Album
-                  </Text>
-              <Button
-                small
-                color="transparent"
-                textStyle={{ color: nowTheme.COLORS.PRIMARY, fontSize: 14 }}
-              >
-                View all
-                  </Button>
-            </Block>
-
-
-            <Block style={{ paddingBottom: -HeaderHeight * 2, paddingHorizontal: 15}}>
-              <Block row space="between" style={{ flexWrap: 'wrap' }}>
-                {Images.Viewed.map((img, imgIndex) => (
-                  <Image
-                    source={img}
-                    key={`viewed-${img}`}
-                    resizeMode="cover"
-                    style={styles.thumb}
-                  />
-                ))}
-              </Block>
-            </Block>
-          </Block>
-        </ScrollView>
-      </Block>
-    </Block>
-
-  )
+const getData = async (key) => {
+  try {
+    const jsonValue = await AsyncStorage.getItem(key)
+    return jsonValue != null ? JSON.parse(jsonValue) : null;
+  } catch(e) {
+    console.log(e)
+  }
 }
 
 
+class Profile extends React.Component {
 
+  state = {
+    user: {},
+    simulation: [],
+  }
 
+  async componentDidMount() {
+    const user = await getData('@user') 
+    const simulation = await getData('@simulation')
+
+    this.setState({
+      simulation: simulation.data,
+      user: user.data
+    })
+  }
+
+  addSimulation = () => {
+    console.log('test')
+  }
+
+  render() {
+    const { simulation, user } = this.state;
+
+    return (
+      <Block flex>
+        <Block flex>
+          <ImageBackground
+            source={Images.RegisterBackground}
+            style={styles.profileContainer}
+            imageStyle={styles.profileBackground}
+          >
+            <Block style={{ position: 'absolute', width: width, zIndex: 5, height: height * 0.4, paddingHorizontal: 20, backgroundColor: 'rgba(255, 255, 255, .8)' }}>
+                <Block style={{ top: height * 0.1 }}>
+                  <Block middle>
+                    <Text
+                      style={{
+                        fontFamily: 'montserrat-bold',
+                        marginBottom: theme.SIZES.BASE / 2,
+                        fontWeight: '900',
+                        fontSize: 26,
+                        opacity: .7
+                      }}
+                      color='black'
+                      >
+                      {user.firstName}
+                    </Text>
+  
+                    <Text
+                      size={16}
+                      color="black"
+                      style={{
+                        marginTop: 5,
+                        fontFamily: 'montserrat-bold',
+                        lineHeight: 20,
+                        fontWeight: 'bold',
+                        fontSize: 18,
+                        opacity: .7
+                      }}
+                    >
+                      {user.firstName}
+                    </Text>
+                  </Block>
+                  <Block style={styles.info}>
+                    <Block row space="around">
+                          
+                    <Text
+                      size={16}
+                      color="black"
+                      style={{
+                        marginTop: 5,
+                        fontFamily: 'montserrat-bold',
+                        lineHeight: 20,
+                        fontWeight: 'bold',
+                        fontSize: 18,
+                        opacity: .7
+                      }}
+                    >
+                      {user.email}
+                    </Text>
+                    </Block>
+                  </Block>
+                </Block>
+              <Block
+                middle
+                row
+                style={{ position: 'absolute', width: width, top: height * 0.4 - 26, zIndex: 99 }}
+              >
+                <Button onPress={this.addSimulation} style={{ width: 150, height: 44, marginHorizontal: 5, elevation: 0 }} textStyle={{ fontSize: 16 }} round>
+                  + simulation
+                </Button>
+              </Block>
+            </Block>
+          </ImageBackground>
+        </Block>
+        <Block />
+        <Block flex style={{ position: 'absolute', padding: theme.SIZES.BASE, top: height * 0.42}}>
+          <ScrollView showsVerticalScrollIndicator={false}>
+            <Block flex>
+              <Block middle>
+                <Text
+                  style={{
+                    color: '#2c2c2c',
+                    fontWeight: 'bold',
+                    fontSize: 19,
+                    fontFamily: 'montserrat-bold',
+                    marginTop: 15,
+                    marginBottom: 30,
+                    zIndex: 2
+                  }}
+                >
+                  Mes simulations
+                    </Text>
+              </Block>
+              <Block >
+                <Block row space="between" style={{flexDirection: 'column', width: width}}>
+                  {simulation.map((item, Index) => (
+                    <TouchableHighlight>
+                    <Block card key={Index} flex style={[styles.card, styles.shadow]}>
+                      <Block flex space="between" style={[styles.cardDescription, styles.content]}>
+                        <Block flex>
+                          <Text
+                            size={22}
+                            color={nowTheme.COLORS.SECONDARY}
+                          >
+                            {item.result} €
+                          </Text>
+                        </Block>
+                        <Block flex right>
+                          <Text
+                            size={22}
+                            color={nowTheme.COLORS.SECONDARY}
+                          >
+                            +
+                          </Text>
+                        </Block>
+                      </Block>
+                  </Block>
+                  </TouchableHighlight>
+                  ))}
+                </Block>
+              </Block>
+            </Block>
+          </ScrollView>
+        </Block>
+      </Block>
+    )
+  }
+}
 
 const styles = StyleSheet.create({
 
@@ -220,46 +177,51 @@ const styles = StyleSheet.create({
     width,
     height,
     padding: 0,
-    zIndex: 1
+    zIndex: 1,
   },
+
   profileBackground: {
     width,
-    height: height * 0.6
+    height: height * 0.4
+  },
+
+  content: {
+    flexDirection: 'row',
+    alignItems: 'center'
   },
 
   info: {
     marginTop: 30,
     paddingHorizontal: 10,
-    height: height * 0.8
+    height: height * 0.1,
   },
-  avatarContainer: {
-    position: 'relative',
-    marginTop: -80
+
+  card: {
+    backgroundColor: theme.COLORS.WHITE,
+    marginVertical: theme.SIZES.BASE,
+    borderWidth: 0,
+    width: width * 0.85,
+    height: 70,
+    marginBottom: 4,
+    marginLeft: 4
   },
-  avatar: {
-    width: thumbMeasure,
-    height: thumbMeasure,
-    borderRadius: 50,
-    borderWidth: 0
+
+  cardDescription: {
+    padding: theme.SIZES.BASE / 2,
   },
-  nameInfo: {
-    marginTop: 35
+  imageContainer: {
+    borderRadius: 3,
+    elevation: 1,
+    overflow: 'hidden'
   },
-  thumb: {
-    borderRadius: 4,
-    marginVertical: 4,
-    alignSelf: 'center',
-    width: thumbMeasure,
-    height: thumbMeasure
+
+  shadow: {
+    shadowColor: '#8898AA',
+    shadowOffset: { width: 0, height: 1 },
+    shadowRadius: 3,
+    shadowOpacity: 0.4,
+    elevation: 2
   },
-  social: {
-    width: nowTheme.SIZES.BASE * 3,
-    height: nowTheme.SIZES.BASE * 3,
-    borderRadius: nowTheme.SIZES.BASE * 1.5,
-    justifyContent: 'center',
-    zIndex: 99,
-    marginHorizontal: 5
-  }
 });
 
 export default Profile;

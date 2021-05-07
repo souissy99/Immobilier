@@ -73,7 +73,7 @@ function ProfileStack(props) {
           header: ({ navigation, scene }) => (
             <Header
               transparent
-              white
+              black
               title="Profile"
               navigation={navigation}
               scene={scene}

@@ -1,7 +1,8 @@
-import React from 'react';
-import { StyleSheet, StatusBar, Dimensions, TouchableWithoutFeedback, Keyboard, ImageBackground, TouchableHighlight } from 'react-native';
-import { Block, Button, Text, Checkbox, theme, Button as GaButton } from 'galio-framework';
+import React, { useState } from 'react';
+import { StyleSheet, StatusBar, Dimensions, TouchableWithoutFeedback, Keyboard, ImageBackground, TouchableHighlight, Alert  } from 'react-native';
+import { Block, Button, Text, Checkbox, theme, Button as GaButton, Toast } from 'galio-framework';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import NotificationPopup from 'react-native-push-notification-popup';
 
 import { Images, nowTheme, api } from '../constants/';
 import { Input, Icon, CalculatorForm } from '../components';
@@ -55,17 +56,18 @@ export default class Onboarding extends React.Component {
     }).then(([res, data]) => {
       if(res == 200) {
         storeData('@simulation', data)
-        console.log(data)
         this.setState({isLoading: false})
         return this.props.navigation.navigate('App');
       } else {
         this.setState({isLoading: false})
         console.log(res)
+        Alert.alert("Une erreur est survenus, veuillez ressayer plus tard.")
       }
     })
     .catch((error) => {
       this.setState({isLoading: false})
-      console.error(error);
+      console.error(error)
+      Alert.alert("Une erreur est survenus, veuillez ressayer plus tard.")
     })
   }
   
@@ -80,7 +82,15 @@ export default class Onboarding extends React.Component {
     if(!firstName || !lastName || !email || !address || !password || !passwordCheck) {
       console.log('remplir tout les champs')
       this.setState({isLoading: false})
+      Alert.alert("Veuillez remplir tous les champs svp.")
     }
+
+    else if(password != passwordCheck) {
+      console.log('Mdp differents')
+      this.setState({isLoading: false})
+      Alert.alert("Les mots de passes sont différents.")
+    }
+
     else {
         fetch(api.url + 'app/signup', {
             method: 'POST',
@@ -110,11 +120,13 @@ export default class Onboarding extends React.Component {
           } else {
             console.log(res, data)
             this.setState({isLoading: false})
+            Alert.alert("Une erreur est survenus, veuillez ressayer.")
           }
         })
         .catch((error) => {
           this.setState({isLoading: false})
-          console.error(error);
+          console.error(error)
+          Alert.alert("Une erreur est survenus, veuillez ressayer plus tard.")
         })
     }
   }
@@ -126,6 +138,7 @@ export default class Onboarding extends React.Component {
     if(!email || !password) {
         console.log('remplir tout les champs')
         this.setState({isLoading: false})
+        Alert.alert("Veuillez remplir tout les champs svp.")
     }
     else {
         fetch(api.url + 'app/login', {
@@ -149,11 +162,13 @@ export default class Onboarding extends React.Component {
           } else {
             this.setState({isLoading: false})
             console.log(res)
+            Alert.alert("Une erreur est survenus, veuillez ressayer.")
           }
         })
         .catch((error) => {
           this.setState({isLoading: false})
-            console.error(error);
+            console.error(error)
+            Alert.alert("Une erreur est survenus, veuillez ressayer plus tard.")
         })
     }
   }
@@ -335,7 +350,7 @@ export default class Onboarding extends React.Component {
 
     return (
     <Block flex space="evenly">
-      <Block flex={0.4} middle style={styles.socialConnect}>
+      <Block flex={0.3} middle style={styles.socialConnect}>
         <Block flex={0.5} middle>
           <Text
             style={{
@@ -376,7 +391,7 @@ export default class Onboarding extends React.Component {
                   placeholder="Mot de passe"
                   style={styles.inputs}
                   onChangeText={val => this.onChangeText('password', val)}
-                  password
+                  secureTextEntry={true}
                   iconContent={
                     <Icon
                       size={16}
@@ -390,7 +405,7 @@ export default class Onboarding extends React.Component {
               </Block>
             </Block>
             <Block center>
-              <Button color="primary" round style={styles.createButton} onPress={this.loginValidation} loading={isLoading}>
+              <Button color="primary" round style={styles.createButton} onPress={() => this.loginValidation()} loading={isLoading}>
                 <Text
                   style={{ fontFamily: 'montserrat-bold' }}
                   size={14}
@@ -423,8 +438,7 @@ export default class Onboarding extends React.Component {
   };
   
   render() {
-    const { loginView } = this.state;
-    const { calculatorView } = this.state;
+    const { loginView, calculatorView } = this.state;
 
     return (
       <DismissKeyboard>
@@ -447,6 +461,12 @@ export default class Onboarding extends React.Component {
 }
 
 const styles = StyleSheet.create({
+  toast: {
+    width: width * 0.9,
+    borderColor: 'red',
+    borderWidth: 1,
+    backgroundColor: 'pink'
+  },
   name: {
     flexWrap: 'wrap',
     alignItems: 'flex-start',
@@ -460,13 +480,14 @@ const styles = StyleSheet.create({
   },
   imageBackground: {
     width: width,
-    height: height
+    height: height,
+    aspectRatio: 3/2
   },
   registerContainer: {
     marginTop: 30,
     width: width * 0.95,
     height: height < 812 ? height * 0.8 : height * 0.8,
-    backgroundColor: nowTheme.COLORS.WHITE,
+    backgroundColor: 'rgba(255, 255, 255, .9)',
     borderRadius: 4,
     shadowColor: nowTheme.COLORS.BLACK,
     shadowOffset: {
@@ -477,11 +498,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     elevation: 1,
     overflow: 'hidden'
-  },
-  socialConnect: {
-    backgroundColor: nowTheme.COLORS.WHITE
-    // borderBottomWidth: StyleSheet.hairlineWidth,
-    // borderColor: "rgba(136, 152, 170, 0.3)"
   },
   socialButtons: {
     width: 120,

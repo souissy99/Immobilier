@@ -58,11 +58,12 @@ class CustomSlider extends Component{
         const items = [];
         for (let i=this.props.min; i <= this.props.max; i++) {
             items.push(
-                <Item 
-                    value = {i}
-                    first = {this.state.first}
-                    second = {this.state.second}
-                />
+            <Item
+                key = {i} 
+                value = {i}
+                first = {this.state.first}
+                second = {this.state.second}
+            />
             );
         }
         return items;

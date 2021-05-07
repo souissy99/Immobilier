@@ -30,15 +30,18 @@
     "galio-framework": "^0.7.1",
     "prop-types": "^15.7.2",
     "react": "16.13.1",
+    "react-dom": "^17.0.2",
     "react-native": "https://github.com/expo/react-native/archive/sdk-40.0.1.tar.gz",
     "react-native-elements": "^3.3.2",
     "react-native-gesture-handler": "~1.8.0",
     "react-native-modal-dropdown": "git+https://github.com/siemiatj/react-native-modal-dropdown.git",
+    "react-native-push-notification-popup": "^1.6.0",
     "react-native-reanimated": "~1.13.0",
     "react-native-safe-area-context": "3.1.9",
     "react-native-screens": "~2.15.2",
     "react-native-snap-carousel": "^3.9.1",
-    "react-native-svg": "12.1.0"
+    "react-native-svg": "12.1.0",
+    "react-native-web": "^0.15.7"
   },
   "devDependencies": {
     "babel-eslint": "^10.0.3",

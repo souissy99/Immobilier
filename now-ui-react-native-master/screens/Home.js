@@ -34,22 +34,52 @@ class Home extends React.Component {
     offset: 1,
     simulation: {},
     ads: [],
+    type: "",
+    surfaceMin: 0,
+    surfaceMax: 0,
+    bedrooms: [],
+    rooms: [],
   };
 
   getAds = (offset, limit) => {
+    const { type, ads, surfaceMin, surfaceMax, bedrooms, rooms } = this.state;
+    let category = "";
+    let surfacemax = surfaceMax;
+    let bedroomsMax;
+    let roomsMax;
+
     this.setState({isLoading: true})
-    fetch(api.url + 'immobiliers?page=' + offset + '&limit=' + limit + '&price[min]=' + this.state.simulation.result * 0.90 + '&price[max]=' + this.state.simulation.result * 1.1, {
+
+    if (type == "appartement") category += "&category=appartement"
+    if (type == "maison") category += "&category=maison"
+    if (surfaceMax == 0) surfacemax = ""
+    if (!bedrooms[1]) bedroomsMax = ""
+    else bedroomsMax = bedrooms[1]
+    if (!rooms[1]) roomsMax = ""
+    else roomsMax = rooms[1]
+
+    console.log(rooms[1])
+    console.log(roomsMax)
+
+    fetch(
+      api.url + 'immobiliers?page=' + offset + '&limit=' + limit + '&price[min]=' + 0 * 0.90 + '&price[max]=' + 500000 * 1.1 + category + '&surface[min]=' + surfaceMin + '&surface[max]=' + surfacemax + '&bedrooms[min]=' + bedrooms[0] + '&bedrooms[max]=' + bedroomsMax + '&rooms[min]=' + rooms[0] + '&rooms[max]=4', {
       method: 'GET',
       headers: {
           'Content-Type': 'application/json',
       },
     })
-      .then((response) => response.json())
-      .then((responseJson) => {
-        responseJson.data.map(item => (this.state.ads.push(item)))
-        this.setState({
-          isLoading: false,
-        })
+      .then(response => {
+      const statusCode = response.status;
+      const data = response.json();
+      return Promise.all([statusCode, data]);
+      }).then(([res, data]) => {
+        console.log(data)
+        if (res == 200) {
+          data.data.map(item => (ads.push(item)))
+          this.setState({
+            isLoading: false,
+          })
+        }
       })
       .catch((error) => {
         this.setState({isLoading: false})
@@ -61,16 +91,24 @@ class Home extends React.Component {
     const simulation = await getData('@simulation') 
     const filter = await getData('@filter')
 
-    console.log(filter)
+    if (filter.maison && !filter.appartement) this.setState({type: "maison"})
+    else if (!filter.maison && filter.appartement) this.setState({type: "appartement"})
+    else this.setState({type: ""})
 
-    this.setState({simulation: simulation.data[0]})
-    this.getAds(this.state.offset, 15, this.state.simulation.price)
+    this.setState({
+      simulation: simulation.data[0],
+      surfaceMin: filter.surfaceMin,
+      surfaceMax: filter.surfaceMax,
+      bedrooms: filter.nombreChambres,
+      rooms: filter.nombrePieces
+    })
+    this.getAds(this.state.offset, 15)
   }
 
   loadMore = () => {
     const newOffset = this.state.offset + 1;
     this.setState({offset: newOffset})
-    this.getAds(this.state.offset, 15, this.state.simulation.price)
+    this.getAds(newOffset, 15, this.state.simulation.result)
   }
 
   renderArticles = () => {

@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Dimensions, ScrollView, Image } from "react-native";
+import { StyleSheet, Dimensions, ScrollView, Image, TouchableOpacity } from "react-native";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Block, Text, theme, Button, Button as GaButton } from "galio-framework";
 import Carousel, { ParallaxImage } from 'react-native-snap-carousel';
@@ -9,18 +9,40 @@ import nowTheme from '../constants/Theme';
 
 const { width, height } = Dimensions.get('screen');
 
+const getData = async (key) => {
+  try {
+    const jsonValue = await AsyncStorage.getItem(key)
+    return jsonValue != null ? JSON.parse(jsonValue) : null;
+  } catch(e) {
+    // error reading value
+  }
+}
+
 class Details extends React.Component {
 
   constructor(props){
     super(props);
     this.state = {
       activeIndex:0,
+    }
   }
-}
+
+  async componentDidMount() {
+    const user = await getData('@user') 
+    const simulation = await getData('@simulation') 
+    console.log(user)
+    console.log(simulation)
+  }
+
+  goBack = () => {
+    return this.props.navigation.goBack() 
+  }
+
   renderHeader = () => {
     return (
       <Block style={styles.headerStyles}>
         <Block left center style={styles.header}>
+          <TouchableOpacity onPress={this.goBack}>
           <Block style={styles.backIcon}>
             <Icon
             name="arrowleft"
@@ -29,6 +51,7 @@ class Details extends React.Component {
             color="grey"
             /> 
           </Block>
+          </TouchableOpacity>
         </Block>
       </Block>
     );
