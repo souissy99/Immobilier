@@ -5,7 +5,7 @@ const morgan = require('morgan');
 const db = require('./src/models')
 const router = require('./src/router');
 
-const hostname = 'localhost';
+const hostname = '51.75.142.58';
 const port = 3001;
 
 const app = express();

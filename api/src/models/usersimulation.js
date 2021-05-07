@@ -38,7 +38,11 @@ module.exports = (sequelize, DataTypes) => {
 			type: DataTypes.FLOAT,
 			allowNull: false
 		},
-		pension: {
+		pensionRecu: {
+			type: DataTypes.FLOAT,
+			allowNull: false
+		},
+		pensionVerse: {
 			type: DataTypes.FLOAT,
 			allowNull: false
 		},

@@ -1,10 +1,9 @@
 const { userSimulation } = require('../../models');
-const auth = require('../../auth/auth');
 const { ValidationError, UniqueConstraintError } = require('sequelize');
+const Tools = require('../tools.js');
 
 module.exports = (router) => {
 	router.route('/simulations')
-		.all(auth)
 		.get(async (req, res) => {
 			try {
 				const simulations = await userSimulation.findAll();
@@ -15,8 +14,11 @@ module.exports = (router) => {
 		})
 		.post(async (req, res) => {
 			try {
-				if (!req.body?.UserId) return res.status(404).json({ message: 'UserId doit être renseigné' });
-				req.body.result = 200000;
+				if (!req.body.UserId) return res.status(404).json({ message: 'UserId doit être renseigné' });
+
+				const mensualite = Tools.pmt(req.body.totalRevenus, req.body.totalCharges);
+				req.body.result = Tools.va(1.2, 240, mensualite)
+
 				const simulation = await userSimulation.create(req.body);
 				res.status(201).json({ message: `Les simulations de l'utilisateur ${req.body.UserId} ont bien été créees.`, data: simulation });
 			} catch (err) {
@@ -39,7 +41,6 @@ module.exports = (router) => {
 				res.status(500).json({ message: 'Une erreur est survenue. Veuillez réessayer plus tard.', data: err });
 			}
 		})
-		.all(auth)
 		.put(async (req, res) => {
 			try {
 				const id = req.params.id;
@@ -71,7 +72,6 @@ module.exports = (router) => {
 		});
 
 	router.route('/simulations/user/:id')
-		.all(auth)
 		.get(async (req, res) => {
 			try {
 				console.log(req.params);
