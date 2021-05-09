@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Dimensions, ScrollView, Image, ImageBackground, Platform, TouchableHighlight } from 'react-native';
+import { StyleSheet, Dimensions, ScrollView, Modal, ImageBackground, Platform, TouchableHighlight, TouchableOpacity } from 'react-native';
 import { Block, Text, theme, Button as GaButton, Card } from 'galio-framework';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -20,11 +20,22 @@ const getData = async (key) => {
   }
 }
 
+const storeData = async (key, value) => {
+  try {
+    const jsonValue = JSON.stringify(value)
+    await AsyncStorage.setItem(key, jsonValue)
+    console.log('stored')
+  } catch (e) {
+    console.log(e)
+  }
+}
+
 
 class Profile extends React.Component {
 
   state = {
     user: {},
+    modalVisible: false,
     simulation: [],
   }
 
@@ -42,8 +53,17 @@ class Profile extends React.Component {
     console.log('test')
   }
 
+  simulationRedirect = (e, item) => {
+    let data = [];
+    data.push(item);
+
+    storeData('@simulationSearch', data);
+    this.setState({ modalVisible: !this.state.modalVisible })
+    return this.props.navigation.push('App');
+  }
+
   render() {
-    const { simulation, user } = this.state;
+    const { simulation, user, modalVisible } = this.state;
 
     return (
       <Block flex>
@@ -138,7 +158,81 @@ class Profile extends React.Component {
               <Block >
                 <Block row space="between" style={{flexDirection: 'column', width: width}}>
                   {simulation.map((item, Index) => (
-                    <TouchableHighlight>
+                    <TouchableOpacity onPress={() => this.setState({ modalVisible: !modalVisible })}>
+                      <Modal
+                        animationType="slide"
+                        transparent={true}
+                        visible={modalVisible}
+                        onRequestClose={() => {
+                          this.setState({ modalVisible: !modalVisible })
+                        }}
+                      >
+                        <Block flex={0.5} style={styles.modalView2} center>
+                          <Block>
+                            <Text style={styles.title}>
+                              Détails
+                            </Text>
+                          </Block>
+                            <Block style={styles.wrap}>
+                              <Block style={styles.detail}>
+                                <Text>Revenus emprunteur: {item.revenusEmp}</Text>
+                              </Block>
+                              <Block style={styles.detail}>
+                                <Text>Revenus Co emprunteur: {item.revenusCoemp}</Text>
+                              </Block>
+                              <Block style={styles.detail}>
+                                <Text>Primes emprunteur: {item.primesEmp}</Text>
+                              </Block>
+                              <Block style={styles.detail}>
+                                <Text>Primes Co emprunteur: {item.primesCoemp}</Text>
+                              </Block>
+                              <Block style={styles.detail}>
+                                <Text>Pension reçue: {item.pensionRecu}</Text>
+                              </Block>
+                              <Block style={styles.detail}>
+                                <Text>Revenus financiers: {item.revenusFin}</Text>
+                              </Block>
+                              <Block style={styles.detail}>
+                                <Text>Allocations: {item.alloc}</Text>
+                              </Block>
+                              <Block style={styles.detail}>
+                                <Text>Revenus locatifs: {item.revenusLoc}</Text>
+                              </Block>
+                              <Block style={styles.detail}>
+                                <Text>Pension versée: {item.pensionVerse}</Text>
+                              </Block>
+                              <Block style={styles.detail}>
+                                <Text>Loyer: {item.loyer}</Text>
+                              </Block>
+                              <Block style={styles.detail}>
+                                <Text>Prêt immo: {item.pretImmo}</Text>
+                              </Block>
+                              <Block style={styles.detail}>
+                                <Text>Prêt locatif: {item.pretLoc}</Text>
+                              </Block>
+                              <Block style={styles.detail}>
+                                <Text>Crédit conso: {item.creditConso}</Text>
+                              </Block>
+                              <Block style={styles.detail}>
+                                <Text>Crédit Auto: {item.creditAuto}</Text>
+                              </Block>
+                              <Block style={styles.detail}>
+                                <Text>Autre crédit: {item.autreCredit}</Text>
+                              </Block>
+                            </Block>
+                        <Block style={styles.bottom} center>
+                          <Button color="primary" round onPress={(e) => this.simulationRedirect(e, item)}>
+                            <Text
+                              style={{ fontFamily: 'montserrat-bold' }}
+                              size={14}
+                              color={nowTheme.COLORS.WHITE}
+                            >
+                              Rechercher
+                            </Text>
+                          </Button>
+                        </Block>
+                        </Block>
+                      </Modal>
                     <Block card key={Index} flex style={[styles.card, styles.shadow]}>
                       <Block flex space="between" style={[styles.cardDescription, styles.content]}>
                         <Block flex>
@@ -159,7 +253,7 @@ class Profile extends React.Component {
                         </Block>
                       </Block>
                   </Block>
-                  </TouchableHighlight>
+                  </TouchableOpacity>
                   ))}
                 </Block>
               </Block>
@@ -178,6 +272,55 @@ const styles = StyleSheet.create({
     height,
     padding: 0,
     zIndex: 1,
+  },
+
+  name: {
+    width: width,
+    marginLeft: 5,
+    flexWrap: 'wrap',
+    alignItems: 'flex-start',
+    flexDirection:'row',
+  },
+
+  detail: {
+    margin: 5,
+  },
+
+  title: {
+    fontFamily: 'montserrat-bold',
+    fontSize: 20,
+  },
+
+  wrap: {
+    width: width * 0.95,
+    flexDirection: "column",
+    flexWrap: "wrap",
+  },
+
+  bottom: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    marginBottom: 10
+  },
+
+  modalView2: {
+    position: 'absolute',
+    top: height / 5.5,
+    margin: 20,
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 10,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+    width: width,
+    height: height / 1.5,
+    
   },
 
   profileBackground: {

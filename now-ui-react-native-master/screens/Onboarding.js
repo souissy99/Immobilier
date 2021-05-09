@@ -56,6 +56,7 @@ export default class Onboarding extends React.Component {
     }).then(([res, data]) => {
       if(res == 200) {
         storeData('@simulation', data)
+        storeData('@simulationSearch', data.data[0])
         this.setState({isLoading: false})
         return this.props.navigation.navigate('App');
       } else {

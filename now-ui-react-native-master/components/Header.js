@@ -1,6 +1,6 @@
 import React from 'react';
 import { withNavigation } from '@react-navigation/compat';
-import { TouchableOpacity, StyleSheet, Platform, Dimensions, Modal, TouchableWithoutFeedback, Keyboard, View } from 'react-native';
+import { TouchableOpacity, StyleSheet, Platform, Dimensions, Modal, TouchableWithoutFeedback, Keyboard, View, Alert } from 'react-native';
 import { Button, Block, NavBar, Text, theme, Button as GaButton, Checkbox } from 'galio-framework';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -106,42 +106,15 @@ class Header extends React.Component {
       case 'Acceuil':
         return [
           <BellButton key="chat-home" navigation={navigation} isWhite={white} />,
-          <BasketButton key="basket-home" navigation={navigation} isWhite={white} />
-        ];
-      case 'Deals':
-        return [
-          <BellButton key="chat-categories" navigation={navigation} />,
-          <BasketButton key="basket-categories" navigation={navigation} />
-        ];
-      case 'Categories':
-        return [
-          <BellButton key="chat-categories" navigation={navigation} isWhite={white} />,
-          <BasketButton key="basket-categories" navigation={navigation} isWhite={white} />
-        ];
-      case 'Category':
-        return [
-          <BellButton key="chat-deals" navigation={navigation} isWhite={white} />,
-          <BasketButton key="basket-deals" navigation={navigation} isWhite={white} />
         ];
       case 'Profile':
         return [
           <BellButton key="chat-profile" navigation={navigation} isWhite={white} />,
-          <BasketButton key="basket-deals" navigation={navigation} isWhite={white} />
-        ];
-      case 'Account':
-        return [
-          <BellButton key="chat-profile" navigation={navigation} />,
-          <BasketButton key="basket-deals" navigation={navigation} />
         ];
       case 'Product':
         return [
           <BellButton key="chat-profile" navigation={navigation} isWhite={white} />,
           <BasketButton key="basket-product" navigation={navigation} isWhite={white} />
-        ];
-      case 'Search':
-        return [
-          <BellButton key="chat-search" navigation={navigation} isWhite={white} />,
-          <BasketButton key="basket-search" navigation={navigation} isWhite={white} />
         ];
       case 'Settings':
         return [
@@ -194,6 +167,7 @@ class Header extends React.Component {
     if (this.state.surfaceMax != 0) {
       if (Number(this.state.surfaceMin) > Number(this.state.surfaceMax)) {
         console.log("Min ne peut etre sup a max")
+        Alert.alert("La surface minimum ne peut pas être supérieur à la surface maximum.")
         return
       }
     }
@@ -222,7 +196,7 @@ class Header extends React.Component {
 
     return (
       <Block row style={styles.options}>
-        <Button
+        {/* <Button
           shadowless
           style={[styles.tab, styles.divider]}
           onPress={() => this.setState({ modalSortVisible: !modalSortVisible })}
@@ -239,8 +213,8 @@ class Header extends React.Component {
               {optionLeft || 'Trier'}
             </Text>
           </Block>
-        </Button>
-        <Modal
+        </Button> */}
+        {/* <Modal
           animationType="slide"
           transparent={true}
           visible={modalSortVisible}
@@ -248,12 +222,11 @@ class Header extends React.Component {
             this.setState({ modalSortVisible: !modalSortVisible })
           }}
         >
-          <Block flex center>
-            <Block style={styles.modalView}>
+          <Block flex={0.5} style={styles.modalView2} center>
+            <Block>
               <Text>GFG</Text>
             </Block>
-          </Block>
-          <Block flex={0.1} center>
+          <Block style={styles.bottom} center>
             <Button color="primary" round style={styles.createButton} onPress={this.sortValidation}>
               <Text
                 style={{ fontFamily: 'montserrat-bold' }}
@@ -264,7 +237,8 @@ class Header extends React.Component {
               </Text>
             </Button>
           </Block>
-        </Modal>
+          </Block>
+        </Modal> */}
         <Modal
           animationType="slide"
           transparent={true}
@@ -460,6 +434,11 @@ const styles = StyleSheet.create({
     fontFamily: 'montserrat-regular',
     fontSize: 20,
   },
+  bottom: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    marginBottom: 20
+  },
   inputs: {
     borderWidth: 1,
     borderColor: '#E3E3E3',
@@ -496,6 +475,25 @@ const styles = StyleSheet.create({
     elevation: 5,
     width: width,
     height: height
+  },
+  modalView2: {
+    position: 'absolute',
+    top: height / 5.5,
+    margin: 20,
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 10,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+    width: width,
+    height: height / 3
   },
   title: {
     width: '100%',
