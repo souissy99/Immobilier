@@ -71,7 +71,8 @@ class Header extends React.Component {
     surfaceMin: 0,
     surfaceMax: 0,
     nombreChambres: [],
-    nombrePieces: []
+    nombrePieces: [],
+    codePostal: 0
   };
 
   checkThisBox = (itemId, checked) => {
@@ -171,6 +172,12 @@ class Header extends React.Component {
         return
       }
     }
+
+    if (this.state.codePostal.length != 5 && this.state.codePostal.length > 0) {
+      Alert.alert("Le code postal n'est pas valide.")
+      return
+    }
+
     const filter = {
       maison: this.state.type[0].checked,
       appartement: this.state.type[1].checked,
@@ -178,6 +185,7 @@ class Header extends React.Component {
       surfaceMax: this.state.surfaceMax,
       nombreChambres: this.state.nombreChambres,
       nombrePieces: this.state.nombrePieces,
+      codePostal: this.state.codePostal,
     };
 
     storeData('@filter', filter);
@@ -311,9 +319,18 @@ class Header extends React.Component {
                     single={false}
                   />
               </Block>
-              {/* <Block style={styles.lined}>
-                <Text style={styles.titleFilter}>Surface terrain</Text>
-              </Block> */}
+              <Block style={styles.lined}>
+                <Text style={styles.titleFilter}>Code postal</Text>
+                <Block width={width * 0.4}>
+                  <Input
+                      right
+                      placeholder="Code postal"
+                      style={styles.inputs}
+                      type="number-pad"
+                      onChangeText={val => this.onChangeText('codePostal', val)}
+                    />
+                  </Block>
+              </Block>
             </Block>
           </Block>
           </DismissKeyboard>
@@ -474,7 +491,8 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 5,
     width: width,
-    height: height
+    height: height,
+    // backgroundColor: 'red'
   },
   modalView2: {
     position: 'absolute',

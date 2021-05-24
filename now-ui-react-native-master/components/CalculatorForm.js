@@ -30,6 +30,7 @@ class CalculatorForm extends React.Component {
 
   constructor(props) {
     super(props);
+    this.getSimulation = this.getSimulation.bind(this);
     this.state = {
       isLoading: false,
       modalRevenusVisible: false,
@@ -89,8 +90,9 @@ class CalculatorForm extends React.Component {
     }).then(([res, data]) => {
       if(res == 200) {
         storeData('@simulation', data)
+        storeData('@simulationSearch', data.data.pop())
         this.setState({isLoading: false})
-        return this.props.navigation.navigate('App');
+        return this.props.navigation.push('App');
       } else {
         this.setState({isLoading: false})
         console.log(res)

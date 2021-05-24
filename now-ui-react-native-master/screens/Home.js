@@ -39,10 +39,11 @@ class Home extends React.Component {
     surfaceMax: 0,
     bedrooms: [],
     rooms: [],
+    codePostal: '',
   };
 
   getAds = (offset, limit) => {
-    const { type, ads, surfaceMin, surfaceMax, bedrooms, rooms, simulation } = this.state;
+    const { type, ads, surfaceMin, surfaceMax, bedrooms, rooms, simulation, codePostal } = this.state;
     let category = "";
     let surfacemax = surfaceMax;
     let bedroomsMax;
@@ -50,11 +51,15 @@ class Home extends React.Component {
     let roomsMax;
     let roomsMin;
     let result;
+    let code_postal;
 
     if (simulation.result) result = simulation.result;
     else if (simulation[0].result) result = simulation[0].result;
 
     this.setState({isLoading: true})
+
+    if (codePostal == 0) code_postal = ''
+    else code_postal = codePostal;
 
     if (type == "appartement") category += "&category=appartement"
     if (type == "maison") category += "&category=maison"
@@ -72,7 +77,7 @@ class Home extends React.Component {
     else roomsMin = rooms[0]
 
     fetch(
-      api.url + 'immobiliers?page=' + offset + '&limit=' + limit + '&price[min]=' + result * 0.90 + '&price[max]=' + result * 1.1 + category + '&surface[min]=' + surfaceMin + '&surface[max]=' + surfacemax + '&bedrooms[min]=' + bedroomsMin + '&bedrooms[max]=' + bedroomsMax + '&rooms[min]=' + roomsMin + '&rooms[max]=' + roomsMax, {
+      api.url + 'immobiliers?page=' + offset + '&limit=' + limit + '&price[min]=' + result * 0.90 + '&price[max]=' + result * 1.1 + category + '&surface[min]=' + surfaceMin + '&surface[max]=' + surfacemax + '&bedrooms[min]=' + bedroomsMin + '&bedrooms[max]=' + bedroomsMax + '&rooms[min]=' + roomsMin + '&rooms[max]=' + roomsMax + '&code_postal=' + code_postal, {
       method: 'GET',
       headers: {
           'Content-Type': 'application/json',
@@ -104,8 +109,6 @@ class Home extends React.Component {
     const simulation = await getData('@simulationSearch') 
     const filter = await getData('@filter')
 
-    console.log(typeof(simulation))
-
     if (filter.maison && !filter.appartement) this.setState({type: "maison"})
     else if (!filter.maison && filter.appartement) this.setState({type: "appartement"})
     else this.setState({type: ""})
@@ -115,7 +118,8 @@ class Home extends React.Component {
       surfaceMin: filter.surfaceMin,
       surfaceMax: filter.surfaceMax,
       bedrooms: filter.nombreChambres,
-      rooms: filter.nombrePieces
+      rooms: filter.nombrePieces,
+      codePostal: filter.codePostal
     })
     this.getAds(this.state.offset, 15)
   }
