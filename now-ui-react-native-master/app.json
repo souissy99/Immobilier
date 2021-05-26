@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "Now UI React Native",
+    "name": "Inoyam",
     "slug": "now-ui-react-native",
     "privacy": "public",
     "platforms": [
@@ -33,6 +33,11 @@
     },
     "ios": {
       "supportsTablet": true
+    },
+    "android": {
+      "package": "com.inoyam.inoyam",
+      "permissions": [],
+      "versionCode": 1
     },
     "description": "Now UI React Native, based on Now UI Design System. Coded by Creative Tim"
   }
