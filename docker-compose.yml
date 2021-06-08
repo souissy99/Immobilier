@@ -1,39 +1,28 @@
-version: '3.5'
+version: "3.7"
 
 services:
-  postgres:
-    image: postgres
-    environment:
-      POSTGRES_USER: ${POSTGRES_USER:-postgres}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-yassine1234@@}
-      PGDATA: /data/postgres
-    volumes:
-       - postgres:/data/postgres
-    ports:
-      - "5432:5432"
+  mysql:
+    image: mysql:8.0.19
     networks:
-      - postgres
-    restart: unless-stopped
-  
-  pgadmin:
-    image: dpage/pgadmin4
+      - vps-network
+    ports:
+      - "3306:3306"
     environment:
-      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-yassine.souissy@gmail.com}
-      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-yassine1234@@}
-      PGADMIN_CONFIG_SERVER_MODE: 'False'
-    volumes:
-       - pgadmin:/root/.pgadmin
+      MYSQL_ROOT_PASSWORD: inoyam1234@@
+    # volumes:
+    #   - ./mysql:/docker-entrypoint-initdb.d
+    command: mysqld --default-authentication-plugin=mysql_native_password
 
-    ports:
-      - "${PGADMIN_PORT:-5050}:80"
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:5.0.2
     networks:
-      - postgres
-    restart: unless-stopped
+      - vps-network
+    ports:
+      - "8080:80"
+    environment:
+      PMA_HOST: mysql
+    depends_on:
+      - mysql
 
 networks:
-  postgres:
-    driver: bridge
-
-volumes:
-    postgres:
-    pgadmin:
+  vps-network:
